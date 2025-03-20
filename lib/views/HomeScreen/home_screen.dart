@@ -28,20 +28,11 @@ class HomeScreen extends StatelessWidget {
 
       // backgroundColor: const Color(0xffF5FFFA),
       appBar: AppBar(
-        toolbarHeight: 55,
         elevation: 1,
         actionsPadding: EdgeInsets.only(right: 10),
         centerTitle: true,
-
-        // Remove Reset Button 
-        // leading: IconButton(
-        //   onPressed: () => context.read<GameController>().resetGame(context),
-        //   icon: Icon(Icons.restart_alt, color: Color(0xffFF6B6B)),
-        // ),
         title: SvgPicture.asset('assets/wordly_name_logo.svg'),
-        // backgroundColor: Color(0xffE8E7E2),
         backgroundColor: Color(0xffE0F4E5),
-        // backgroundColor: const Color(0xffF5FFFA),
       ),
       body: SafeArea(
         child: Consumer<GameController>(
@@ -50,7 +41,7 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(top: 6),
+                    margin: EdgeInsets.only(top: 10),
                     height: 120,
 
                     child: ListView.builder(
@@ -91,7 +82,7 @@ class HomeScreen extends StatelessWidget {
                       value.handleChange(key, context);
                     },
                   ),
-                  SizedBox(height: 10),
+                  SizedBox(height: 20),
                   _buildButton(
                     "Submit",
 

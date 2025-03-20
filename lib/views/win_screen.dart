@@ -231,7 +231,7 @@ class WinDetailsWidget extends StatelessWidget {
             color: Color(0xffE5F9FF),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text("Total Wins: $score 🏆", style: TextStyle(fontSize: 18)),
+          child: Text("Score: $score 🏆", style: TextStyle(fontSize: 18)),
         ),
       ],
     );

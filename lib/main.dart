@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
         navigatorKey: navigatorKey,
         title: "Wordly",
         debugShowCheckedModeBanner: false,
-        // initialRoute: '/splashscreen',
+        initialRoute: '/splashscreen',
         // initialRoute: '/winscreen',
-        initialRoute: '/gameoverscreen',
+        // initialRoute: '/gameoverscreen',
 
         routes: {
           '/splashscreen': (context)=> SplashScreen(),
