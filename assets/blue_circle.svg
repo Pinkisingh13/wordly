@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="64" height="64" viewBox="0 0 64 64">
+	<path transform="matrix(1 0 0 1 0 0)" d="M32 0C14.3269 0 0 14.3269 0 32L0 32.048C0 49.7211 14.2789 64 31.952 64L32 64C49.6731 64 64 49.7211 64 32.048L64 32C64 14.3269 49.7211 0 32.048 0L32 0Z" fill-rule="nonzero" fill="rgb(78, 205, 196)" opacity="0.2"/>
+</svg>
