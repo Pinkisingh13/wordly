@@ -38,6 +38,7 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
     final score = args?['score'] as int? ?? 0;
+    final streak = args?['streak'] as int? ?? 0;
 
     final listOfSystemWord = systemWord.split("");
 
@@ -82,7 +83,10 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
                     ],
                   ),
                   SizedBox(height: 48),
-                  WinDetailsWidget(score: score.toString()),
+                  WinDetailsWidget(
+                    score: score.toString(),
+                    streak: streak.toString(),
+                  ),
                   SizedBox(height: 45),
 
                   CustomElevatedButton(
@@ -98,11 +102,7 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
             ),
 
             //WORD FACT CARD
-            WordFactCard(
-                color: GradientColor.purple,
-                word: systemWord,
-              ),
-            
+            WordFactCard(color: GradientColor.purple, word: systemWord),
 
             // Overlay animation
             if (_showAnimation)
@@ -165,34 +165,48 @@ class WordContainerWidget extends StatelessWidget {
           colors: [Color(0xffA8E6CF), Color(0xffDCEDC1)],
         ),
       ),
-      child: Text(
-        wordChar,
-        style: TextStyle(
-          fontSize: 30,
-          fontWeight: FontWeight.w900,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            wordChar,
+            style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w900,
 
-          color: Colors.white,
-        ),
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class WinDetailsWidget extends StatelessWidget {
-  const WinDetailsWidget({super.key, required this.score});
+  const WinDetailsWidget({
+    super.key,
+    required this.score,
+    required this.streak,
+    this.isShowText = true,
+  });
 
   final String score;
+  final String streak;
+  final bool isShowText;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     return Column(
       children: [
-        Text(
-          "Amazing Job!",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-        ),
-        SizedBox(height: 16),
+        isShowText
+            ? Text(
+              "Amazing Job!",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+            )
+            : SizedBox(),
+        isShowText ? SizedBox(height: 16) : SizedBox(),
         Container(
           alignment: Alignment.center,
 
@@ -202,7 +216,10 @@ class WinDetailsWidget extends StatelessWidget {
             color: Color(0xffFFE5E5),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text("Winning Streak: 3 🔥", style: TextStyle(fontSize: 18)),
+          child: Text(
+            "Winning Streak: $streak 🔥",
+            style: TextStyle(fontSize: 18),
+          ),
         ),
         SizedBox(height: 12),
         Container(

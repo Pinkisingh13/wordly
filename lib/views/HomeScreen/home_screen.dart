@@ -318,6 +318,11 @@ class DropDownProvider extends ChangeNotifier {
 class GameController extends ChangeNotifier {
   bool isGameStart = false;
   int score = 0;
+  int streak = 0;
+  int row = 0;
+  int col = 0;
+  bool isElseChecking = false;
+
   List<List<String>> gameBoard = List.generate(
     5,
     (index) => List.filled(5, ""),
@@ -328,15 +333,18 @@ class GameController extends ChangeNotifier {
     (_) => List.filled(5, Colors.transparent),
   );
 
-  int row = 0;
-  int col = 0;
-  bool isElseChecking = false;
 
   //score increment
-  void incrementScore() {
+  void incrementScoreAndStreak() {
     score++;
+    streak++;
     notifyListeners();
   }
+
+ void resetStreak(){
+  streak = 0;
+  notifyListeners();
+ } 
 
   //Word Validation
   Future<bool?> isvalidWord(String word) async {
@@ -436,18 +444,12 @@ class GameController extends ChangeNotifier {
         for (int i = 0; i < 5; i++) {
           cellColors[row][i] = Color(0xffAAD174);
         }
-        // showSnackBarSafely(
-        //   context,
-        //   "🎯 Congratulations! You guessed the correct word.",
-        //   Colors.green,
-        // );
-
-        // print("🎯 Congratulations! You guessed the correct word.");
-
-        incrementScore();
+      
+        incrementScoreAndStreak();
         moveToWinScreen(context);
         isGameStart = false;
         isGameOver = true;
+
       } else {
         isElseChecking = true;
         cellColors[row] = List.filled(5, Color(0xff7F7D89));
@@ -497,13 +499,12 @@ class GameController extends ChangeNotifier {
         print("increasing row: $row");
         col = 0;
       } else {
-        showCustomSnackBar(context, "Game Over!", Colors.red);
-        // print("💔 Game Over! The correct word was: $systemWord");
+
+       
         isGameOver = true;
         isGameStart = false;
-
+        resetStreak();
         moveToGameOverScreen(context);
-        // Handle game over logic here
       }
     }
 
@@ -523,7 +524,7 @@ class GameController extends ChangeNotifier {
   }
 
   void moveToWinScreen(BuildContext context) {
-    final arguments = {'systemWord': systemWord, 'score': score};
+    final arguments = {'systemWord': systemWord, 'score': score, 'streak': streak};
     Navigator.pushReplacementNamed(
       context,
       '/winscreen',
@@ -534,7 +535,7 @@ class GameController extends ChangeNotifier {
   }
 
   void moveToGameOverScreen(BuildContext context) {
-    final arguments = {'systemWord': systemWord, 'score': score};
+    final arguments = {'systemWord': systemWord, 'score': score, 'streak': streak};
     Navigator.pushReplacementNamed(
       context,
       '/gameoverscreen',

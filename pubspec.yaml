@@ -98,6 +98,7 @@ flutter:
     - assets/game_over_star.jpg
     - assets/purple_star.svg
     - assets/logo_png.png
+    - assets/streak.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
