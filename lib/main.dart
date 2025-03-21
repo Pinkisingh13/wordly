@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wordly/views/HomeScreen/home_screen.dart';
-import 'package:wordly/views/game.dart';
-import 'package:wordly/views/game_over.dart';
-import 'package:wordly/views/win_screen.dart';
+import 'package:wordly/views/home/home_screen.dart';
+import 'package:wordly/views/game/game.dart';
+import 'package:wordly/views/game/game_over.dart';
+import 'package:wordly/views/game/win_screen.dart';
 
 import 'views/splash/splash_screen.dart';
 
