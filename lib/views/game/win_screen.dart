@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/view_model/gameview_model.dart';
 import 'package:wordly/views/home/home_screen.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
 
@@ -24,6 +25,11 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
+
+    //     // Load score when screen initializes
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<GameProvider>().loadScore();
+    // });
   }
 
   @override
@@ -37,11 +43,14 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
-    final score = args?['score'] as int? ?? 0;
     final streak = args?['streak'] as int? ?? 0;
 
-    final listOfSystemWord = systemWord.split("");
 
+
+    final listOfSystemWord = systemWord.split("");
+    // Access score from GameProvider
+    final score = context.watch<GameProvider>().score;
+    print("winscreen score: $score");
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 5,

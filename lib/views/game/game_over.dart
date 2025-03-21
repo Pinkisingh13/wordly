@@ -2,7 +2,9 @@ import 'dart:core';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
+import 'package:wordly/view_model/gameview_model.dart';
 import 'package:wordly/views/game/win_screen.dart';
 import '../didyouknow/word_fact_card.dart';
 
@@ -11,16 +13,26 @@ class GameOverScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Load score when screen initializes
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<GameProvider>().loadScore();
+    // });
+
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
 
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
-    final score = args?['score'] as int? ?? 0;
+    // final score = args?['score'] as int? ?? 0;
     final streak = args?['streak'] as int? ?? 0;
 
     final listOfSystemWord = systemWord.split("");
+
+    // Access score from GameProvider
+    final score = context.watch<GameProvider>().score;
+    print("game over score: $score");
+
 
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.black, toolbarHeight: 9),
@@ -131,11 +143,18 @@ class GameOverScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 30,
                     children: [
-                  StreakAndScoreWidget(title: "Streak", streakOrScore: streak.toString(),),
+                      StreakAndScoreWidget(
+                        title: "Streak",
+                        streakOrScore: streak.toString(),
+                      ),
 
-                  StreakAndScoreWidget(title: "Score", streakOrScore: score.toString(), isSvg: false,),
-
-                  ],),
+                      StreakAndScoreWidget(
+                        title: "Score",
+                        streakOrScore: score.toString(),
+                        isSvg: false,
+                      ),
+                    ],
+                  ),
 
                   SizedBox(height: 20),
                   CustomElevatedButton(
@@ -207,7 +226,12 @@ class GameOverScreen extends StatelessWidget {
 }
 
 class StreakAndScoreWidget extends StatelessWidget {
-  const StreakAndScoreWidget({super.key, required this.title, required this.streakOrScore, this.isSvg = true});
+  const StreakAndScoreWidget({
+    super.key,
+    required this.title,
+    required this.streakOrScore,
+    this.isSvg = true,
+  });
 
   final String title;
   final String streakOrScore;
@@ -230,7 +254,9 @@ class StreakAndScoreWidget extends StatelessWidget {
             spacing: 4,
 
             children: [
-             isSvg ?  SvgPicture.asset('assets/streak.svg', height: 20) : Text("🏆", style: TextStyle(fontSize: 20),),
+              isSvg
+                  ? SvgPicture.asset('assets/streak.svg', height: 20)
+                  : Text("🏆", style: TextStyle(fontSize: 20)),
 
               Text(
                 title,

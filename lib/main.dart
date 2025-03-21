@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/splashscreen',
         // initialRoute: '/winscreen',
         // initialRoute: '/gameoverscreen',
-
+        theme: ThemeData() ,
         routes: {
           '/splashscreen': (context)=> SplashScreen(),
           '/homescreen': (context) => HomeScreen(),

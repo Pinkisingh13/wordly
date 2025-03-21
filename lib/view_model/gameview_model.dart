@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wordly/main.dart';
 import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
+
 import 'package:wordly/view_model/homeview_model.dart';
 import 'package:wordly/views/game/game.dart';
 
+
+
 class GameProvider extends ChangeNotifier {
   bool isGameStart = false;
-  int score = 0;
-  int streak = 0;
+  int _score = 0;
+  int _streak = 0;
   int row = 0;
   int col = 0;
   bool isElseChecking = false;
+
+    // Call loadScore when the provider is initialized
+  GameProvider() {
+    loadScore();
+  }
+
+  int get score => _score;
+  int get streak => _streak;
 
   List<List<String>> gameBoard = List.generate(
     5,
@@ -24,15 +36,37 @@ class GameProvider extends ChangeNotifier {
     (_) => List.filled(5, Colors.transparent),
   );
 
-  //score increment
-  void incrementScoreAndStreak() {
-    score++;
-    streak++;
+  // Load score from SharedPreferences
+  Future<void> loadScore() async {
+    print("load scroe1: $score");
+    final prefs = await SharedPreferences.getInstance();
+    _score = prefs.getInt('score') ?? 0;
+    print("load scroe 2: $score");
     notifyListeners();
   }
 
+  // Save score to SharedPreferences
+  Future<void> _saveScore() async {
+    print("save score 1: $score");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('score', _score);
+    print("save score 1: $score");
+  }
+  //score increment
+  void incrementScoreAndStreak() {
+    print("increment score 1: $score");
+    _score++;
+    _streak++;
+    print("increment score 2: $score");
+    _saveScore();
+    notifyListeners();
+  }
+
+    
+
+// Reset Streak
   void resetStreak() {
-    streak = 0;
+    _streak = 0;
     notifyListeners();
   }
 
@@ -191,6 +225,7 @@ class GameProvider extends ChangeNotifier {
         isGameOver = true;
         isGameStart = false;
         resetStreak();
+
         moveToGameOverScreen(context);
       }
     }
@@ -201,7 +236,6 @@ class GameProvider extends ChangeNotifier {
   void resetGame(BuildContext context) {
     row = 0;
     col = 0;
-    // score = 0;
     cellColors = List.generate(5, (_) => List.filled(5, Colors.transparent));
     gameBoard = List.generate(5, (_) => List.filled(5, ""));
     isGameOver = false;
@@ -213,13 +247,13 @@ class GameProvider extends ChangeNotifier {
   void moveToWinScreen(BuildContext context) {
     final arguments = {
       'systemWord': systemWord,
-      'score': score,
+      // 'score': score,
       'streak': streak,
     };
     Navigator.pushReplacementNamed(
       context,
       '/winscreen',
-      arguments: arguments, // Pass the system word as an argument
+      arguments: arguments,
     );
 
     resetGame(context);
@@ -228,7 +262,7 @@ class GameProvider extends ChangeNotifier {
   void moveToGameOverScreen(BuildContext context) {
     final arguments = {
       'systemWord': systemWord,
-      'score': score,
+      // 'score': score,
       'streak': streak,
     };
     Navigator.pushReplacementNamed(
