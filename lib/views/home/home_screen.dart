@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_svg/svg.dart';
-
 import 'package:provider/provider.dart';
-
 import 'package:wordly/views/home/widgets/game_category_list_widget.dart';
 import 'package:wordly/views/game/game.dart';
 import 'package:wordly/views/game/widgets/virtual_keyboard.dart';
 import 'package:wordly/views/home/widgets/submit_button.dart';
-
 import '../../view_model/gameview_model.dart';
 import '../../view_model/homeview_model.dart';
 

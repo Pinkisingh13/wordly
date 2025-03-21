@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordly/views/home/home_screen.dart';
-import 'package:wordly/views/game/game.dart';
 import 'package:wordly/views/game/game_over.dart';
 import 'package:wordly/views/game/win_screen.dart';
 
@@ -36,14 +35,50 @@ class MyApp extends StatelessWidget {
         // initialRoute: '/winscreen',
         // initialRoute: '/gameoverscreen',
         theme: ThemeData() ,
-        routes: {
-          '/splashscreen': (context)=> SplashScreen(),
-          '/homescreen': (context) => HomeScreen(),
-          '/gamescreen': (context) => GameScreen(),
-          '/winscreen': (context) => WinScreen(),
-          '/gameoverscreen': (context) => GameOverScreen(),
-        },
+        onGenerateRoute: (settings) => onGenerateRoute(settings),
+        // routes: {
+        //   '/splashscreen': (context)=> SplashScreen(),
+        //   '/homescreen': (context) => HomeScreen(),
+        //   // '/gamescreen': (context) => GameScreen(),
+        //   '/winscreen': (context) => WinScreen(),
+        //   '/gameoverscreen': (context) => GameOverScreen(),
+        // },
       ),
     );
   }
+}
+
+
+Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+
+    case '/splashscreen':
+      return _buildPageRoute(SplashScreen(), settings);
+
+    case '/homescreen':
+      return _buildPageRoute(HomeScreen(), settings);
+
+    case '/gameoverscreen':
+      return _buildPageRoute(GameOverScreen(), settings);
+
+    case '/winscreen':
+      return _buildPageRoute(WinScreen(), settings);
+
+    default:
+      return null;
+  }
+}
+
+PageRouteBuilder _buildPageRoute(Widget screen, RouteSettings settings) {
+  return PageRouteBuilder(
+    settings: settings,
+    pageBuilder: (context, animation, secondaryAnimation) => screen,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 500), // Smooth duration
+  );
 }

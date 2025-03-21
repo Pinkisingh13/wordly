@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:wordly/view_model/gameview_model.dart';
-import 'package:wordly/views/home/home_screen.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
 
 import '../didyouknow/word_fact_card.dart';
@@ -25,11 +23,6 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _animationController = AnimationController(vsync: this);
-
-    //     // Load score when screen initializes
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<GameProvider>().loadScore();
-    // });
   }
 
   @override
@@ -48,9 +41,9 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
 
 
     final listOfSystemWord = systemWord.split("");
-    // Access score from GameProvider
     final score = context.watch<GameProvider>().score;
-    print("winscreen score: $score");
+    // kdebugprint("winscreen score: $score");
+
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 5,
@@ -99,7 +92,7 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
                   SizedBox(height: 45),
 
                   CustomElevatedButton(
-                    // gradient: [Color(0xff8458B3), Color(0xffD0A3BF)],
+             
                     gradient: [
                       GradientColor.purple,
                       GradientColor.lightPinkish,
@@ -143,9 +136,6 @@ class WinController extends ChangeNotifier {
   bool showAni = true;
   void hideAnimation() {
     showAni = false;
-    // if (showAni) {
-    //   Lottie.asset("assets/win.json", width: 60);
-    // }
     notifyListeners();
   }
 }
@@ -247,42 +237,6 @@ class WinDetailsWidget extends StatelessWidget {
   }
 }
 
-// void openLoadingDialogue(String text, String animation, BuildContext context) {
-//   showDialog(
-//     context: context, //Use Get.overlayContext for overlay dialogs
-//     barrierDismissible:
-//         false, //The dialog can't be dismissed by tapping outside
-//     builder:
-//         (_) => PopScope(
-//           canPop: false,
-//           child: Container(
-//             // color: THelperFunctions.isDarkMode(Get.context!)
-//             // ? TColors.dark
-//             color: Colors.white,
-//             width: double.infinity,
-//             height: double.infinity,
-//             child: Column(
-//               children: [
-//                 const SizedBox(height: 100),
-//                 TAnimationLoaderWidget(
-//                   text: text,
-//                   animation: animation,
-//                   showAction: true,
-//                   onActionPressed: () => stopLoading(context),
-//                   actionText: "Go Back",
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//   );
-// }
-
-// /// Stop the currently open loading dialog.
-// /// This method does not return anything.
-// stopLoading(BuildContext context) {
-//   Navigator.of(context).pop();
-// }
 
 class TAnimationLoaderWidget extends StatelessWidget {
   const TAnimationLoaderWidget({

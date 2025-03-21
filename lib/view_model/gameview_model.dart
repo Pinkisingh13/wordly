@@ -7,6 +7,7 @@ import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
 
 import 'package:wordly/view_model/homeview_model.dart';
 import 'package:wordly/views/game/game.dart';
+import 'package:wordly/views/game/game_over.dart';
 
 
 
@@ -270,6 +271,7 @@ class GameProvider extends ChangeNotifier {
       '/gameoverscreen',
       arguments: arguments, // Pass the system word as an argument
     );
+
 
     resetGame(context);
   }

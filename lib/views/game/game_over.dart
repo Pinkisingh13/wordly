@@ -13,10 +13,7 @@ class GameOverScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Load score when screen initializes
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   context.read<GameProvider>().loadScore();
-    // });
+
 
     final width = MediaQuery.sizeOf(context).width;
     final height = MediaQuery.sizeOf(context).height;
