@@ -1,12 +1,14 @@
 import 'dart:core';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
+import 'package:wordly/views/game/gameover/widgets/quick_tip.dart';
+import 'package:wordly/utils/helper_function.dart';
 import 'package:wordly/view_model/gameview_model.dart';
-import 'package:wordly/views/game/win_screen.dart';
-import '../didyouknow/word_fact_card.dart';
+import 'package:wordly/views/game/gamewin/win_screen.dart';
+import '../../didyouknow/word_fact_card.dart';
+import 'widgets/streakandscore.dart';
 
 class GameOverScreen extends StatelessWidget {
   const GameOverScreen({super.key});
@@ -15,21 +17,17 @@ class GameOverScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
 
-    final width = MediaQuery.sizeOf(context).width;
-    final height = MediaQuery.sizeOf(context).height;
+    final width = HelperFunction.width(context);
+    final height = HelperFunction.height(context);
+    final score = context.watch<GameProvider>().score;
 
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
-    // final score = args?['score'] as int? ?? 0;
+
     final streak = args?['streak'] as int? ?? 0;
 
     final listOfSystemWord = systemWord.split("");
-
-    // Access score from GameProvider
-    final score = context.watch<GameProvider>().score;
-    print("game over score: $score");
-
 
     return Scaffold(
       appBar: AppBar(backgroundColor: Colors.black, toolbarHeight: 9),
@@ -220,137 +218,4 @@ class GameOverScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-class StreakAndScoreWidget extends StatelessWidget {
-  const StreakAndScoreWidget({
-    super.key,
-    required this.title,
-    required this.streakOrScore,
-    this.isSvg = true,
-  });
-
-  final String title;
-  final String streakOrScore;
-  final bool isSvg;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 100,
-      width: 100,
-      padding: EdgeInsets.symmetric(vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 4,
-
-            children: [
-              isSvg
-                  ? SvgPicture.asset('assets/streak.svg', height: 20)
-                  : Text("🏆", style: TextStyle(fontSize: 20)),
-
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xff4B5563),
-                ),
-              ),
-            ],
-          ),
-
-          Text(
-            streakOrScore,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xffFF6B6B),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class QuickTipContainer extends StatelessWidget {
-  const QuickTipContainer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 350,
-      height: 70,
-      padding: const EdgeInsets.only(top: 12.0, left: 10, right: 3),
-      decoration: BoxDecoration(
-        color: Color(0xffE5F0FF),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Color.fromARGB(255, 7, 69, 156).withAlpha(40),
-            blurRadius: 12,
-            spreadRadius: 2,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        // spacing: 10,
-        children: [
-          // const SizedBox(width: 12),
-          // Tip Text
-          // Text(
-          //   '🧠 Quick Tip: ',
-          //   style: TextStyle(
-          //     fontSize: 16,
-          //     fontWeight: FontWeight.bold,
-          //     color: Color(0xff374151),
-          //     // fontFamily: 'ComicSans',  // Playful font style
-          //   ),
-          // ),
-          Text(
-            GenerateRandomTip.quickTip,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xff4B5563),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class GenerateRandomTip {
-  static final List<String> quickTips = [
-    "🔡 Start Smart: Try words with A, E, O, T, R, N, S first!",
-    "🧩 Mix It Up: Use a blend of vowels and consonants for better guesses",
-
-    "🔍 Spot the Patterns: Look for pairs like TH, CH, or common endings like -ING.",
-
-    "🚫 Rule Them Out: Eliminate letters that aren’t in the word — fewer choices, better chances!",
-
-    "📍 Yellow Means Move It: Found a yellow letter? Try placing it in a different spot.",
-
-    "🎯 Start with ‘STARE’ or ‘CRANE’: These are strong starter words!",
-
-    "🧠 Think Like a Word Wizard: Words often have vowels in the middle — test that theory",
-
-    "❌ Don’t Repeat Misses: Avoid reusing letters that already turned gray.",
-
-    "🎨 Color Clues Matter: Green = Correct spot, Yellow = Wrong spot, Gray = Not in the word",
-
-    "💬 Guess Smartly: After finding 2-3 letters, try forming words around them.",
-  ];
-
-  static final String quickTip = quickTips[Random().nextInt(quickTips.length)];
 }

@@ -2,28 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wordly/data/services/word_services.dart';
 import 'package:wordly/main.dart';
 import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
-
 import 'package:wordly/view_model/homeview_model.dart';
-import 'package:wordly/views/game/game.dart';
-import 'package:wordly/views/game/game_over.dart';
+
+import '../data/repositories/score_repository.dart';
 
 
 
 class GameProvider extends ChangeNotifier {
   bool isGameStart = false;
+  bool isGameOver = false;
   int _score = 0;
   int _streak = 0;
   int row = 0;
   int col = 0;
   bool isElseChecking = false;
+  final ScoreRepository scoreRepository;
 
     // Call loadScore when the provider is initialized
-  GameProvider() {
+  GameProvider(this.scoreRepository) {
     loadScore();
   }
 
+  String get systemWord => _getSystemWord();
   int get score => _score;
   int get streak => _streak;
 
@@ -39,27 +42,15 @@ class GameProvider extends ChangeNotifier {
 
   // Load score from SharedPreferences
   Future<void> loadScore() async {
-    print("load scroe1: $score");
-    final prefs = await SharedPreferences.getInstance();
-    _score = prefs.getInt('score') ?? 0;
-    print("load scroe 2: $score");
+    _score = await scoreRepository.getScore();
     notifyListeners();
   }
 
-  // Save score to SharedPreferences
-  Future<void> _saveScore() async {
-    print("save score 1: $score");
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('score', _score);
-    print("save score 1: $score");
-  }
   //score increment
   void incrementScoreAndStreak() {
-    print("increment score 1: $score");
     _score++;
     _streak++;
-    print("increment score 2: $score");
-    _saveScore();
+     scoreRepository.saveScore(_score);
     notifyListeners();
   }
 
@@ -71,34 +62,12 @@ class GameProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //Word Validation
-  Future<bool?> isvalidWord(String word) async {
-    try {
-      print("Calling api");
-      final response = await http.get(
-        Uri.parse('https://api.dictionaryapi.dev/api/v2/entries/en/$word'),
-      );
+  // Word Validation
+Future<bool?> isvalidWord(String word) async {
+  return await WordService.checkIsValidWord(word);
+}
 
-      print("api called");
-      print(response.body);
 
-      if (response.statusCode == 200) {
-        print(response.statusCode);
-        return true;
-      } else if (response.statusCode == 404) {
-        print("response is 404");
-        return false;
-      } else {
-        print("API Error: ${response.statusCode}");
-        return null;
-      }
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
-
-  String get systemWord => _getSystemWord();
 
   String _getSystemWord() {
     final provider = _homeProvider;
@@ -116,7 +85,6 @@ class GameProvider extends ChangeNotifier {
     }
   }
 
-  bool isGameOver = false;
 
   // Add in GameController
   bool get isGameActive => isGameStart || isGameOver;
@@ -127,14 +95,13 @@ class GameProvider extends ChangeNotifier {
      CustomSnackBar.showSnackBarSafely(context, "Please Choose Category.!", Colors.red);
       return;
     }
-    print(systemWord);
+    debugPrint(systemWord);
 
     isGameStart = true;
     if (key.length == 1 && RegExp(r'^[A-Z]$').hasMatch(key)) {
       if (col < 5) {
         gameBoard[row][col] = key;
         col++;
-        print("col: $col");
       }
     } else if (key == '❌') {
       if (col > 0) {
@@ -207,10 +174,8 @@ class GameProvider extends ChangeNotifier {
       for (int i = 0; i < 5; i++) {
         gameBoard[row][i] = '';
       }
-      col = 0; // Reset the column pointer
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ You guessed wrong word! Try again.")),
-      );
+      col = 0;
+      CustomSnackBar.showSnackBarSafely(context, "Not A Valid Word" , Colors.red);
       notifyListeners();
 
       return;
@@ -220,7 +185,6 @@ class GameProvider extends ChangeNotifier {
     if (!isGameOver) {
       if (row < 4) {
         row++;
-        print("increasing row: $row");
         col = 0;
       } else {
         isGameOver = true;
@@ -248,7 +212,6 @@ class GameProvider extends ChangeNotifier {
   void moveToWinScreen(BuildContext context) {
     final arguments = {
       'systemWord': systemWord,
-      // 'score': score,
       'streak': streak,
     };
     Navigator.pushReplacementNamed(
@@ -263,13 +226,12 @@ class GameProvider extends ChangeNotifier {
   void moveToGameOverScreen(BuildContext context) {
     final arguments = {
       'systemWord': systemWord,
-      // 'score': score,
       'streak': streak,
     };
     Navigator.pushReplacementNamed(
       context,
       '/gameoverscreen',
-      arguments: arguments, // Pass the system word as an argument
+      arguments: arguments,
     );
 
 

@@ -10,6 +10,7 @@ static void _showCustomSnackBar(
   Color backgroundColor,
 ) {
   ScaffoldMessenger.of(context).showSnackBar(
+
     SnackBar(
       content: Text(
         message,

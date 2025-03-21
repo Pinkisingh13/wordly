@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/utils/helper_function.dart';
 import 'package:wordly/view_model/gameview_model.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
 
-import '../didyouknow/word_fact_card.dart';
+import '../../didyouknow/word_fact_card.dart';
 
 class WinScreen extends StatefulWidget {
   const WinScreen({super.key});
@@ -109,7 +110,7 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
             // Overlay animation
             if (_showAnimation)
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.15,
+                top: HelperFunction.height(context) * 0.15,
                 left: 0,
                 right: 0,
                 child: Lottie.asset(
@@ -196,7 +197,7 @@ class WinDetailsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
+    final width = HelperFunction.width(context);
     return Column(
       children: [
         isShowText
@@ -259,7 +260,7 @@ class TAnimationLoaderWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Lottie.asset(animation, width: MediaQuery.of(context).size.width * 0.8),
+        Lottie.asset(animation, width: HelperFunction.width(context) * 0.8),
         const SizedBox(height: 30),
         Text(
           text,

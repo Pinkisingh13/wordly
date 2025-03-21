@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/utils/helper_function.dart';
 
 
 import '../../view_model/gameview_model.dart';
@@ -41,7 +42,7 @@ class CustomElevatedButton extends StatelessWidget {
               ),
             ),
             child: Container(
-              width: MediaQuery.of(context).size.width * 0.70,
+              width: HelperFunction.width(context) * 0.70,
               alignment: Alignment.center,
 
               padding: const EdgeInsets.symmetric(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/utils/helper_function.dart';
+import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
 import 'package:wordly/views/home/widgets/game_category_list_widget.dart';
 import 'package:wordly/views/game/game.dart';
 import 'package:wordly/views/game/widgets/virtual_keyboard.dart';
@@ -13,7 +15,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenWidth = HelperFunction.width(context);
     final homeProvider = context.watch<HomeProvider>();
     return Scaffold(
       backgroundColor: Color(0xffE0F4E5),
@@ -30,7 +32,11 @@ class HomeScreen extends StatelessWidget {
             return Center(
               child: Column(
                 children: [
-                  GameCategoryContainerList(screenWidth: screenWidth, homeProvider: homeProvider, value:value),
+                  GameCategoryContainerList(
+                    screenWidth: screenWidth,
+                    homeProvider: homeProvider,
+                    value: value,
+                  ),
 
                   screenWidth > 600
                       ? Padding(
@@ -65,21 +71,17 @@ class HomeScreen extends StatelessWidget {
 
                   SubmiButton.submitButton(
                     "Submit",
-                    value.isGameOver
-                        ? null
-                        : () {
-                          if (value.col == 5) {
-                            value.handleChange("submit", context);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "Fill all 5 boxes before submitting!",
-                                ),
-                              ),
-                            );
-                          }
-                        },
+                    () {
+                      if (value.col == 5) {
+                        value.handleChange("submit", context);
+                      } else {
+                        CustomSnackBar.showSnackBarSafely(
+                          context,
+                          "Please Fill the boxes",
+                          Colors.red,
+                        );
+                      }
+                    },
                     screenWidth,
                   ),
                 ],
