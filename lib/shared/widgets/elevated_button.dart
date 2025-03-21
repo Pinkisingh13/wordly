@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
-import 'package:wordly/views/home/home_screen.dart';
+
+
+import '../../view_model/gameview_model.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({super.key, required this.title, required this.gradient});
@@ -21,7 +23,7 @@ class CustomElevatedButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            context.read<GameController>().resetGame(context);
+            context.read<GameProvider>().resetGame(context);
             Navigator.pushNamedAndRemoveUntil(
               context,
               '/homescreen',

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
 import 'package:wordly/views/game/win_screen.dart';
-import '../../shared/widgets/word_fact_card.dart';
+import '../didyouknow/word_fact_card.dart';
 
 class GameOverScreen extends StatelessWidget {
   const GameOverScreen({super.key});

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:wordly/view_model/homeview_model.dart';
+import 'package:wordly/views/home/widgets/category_container.dart';
 
-import '../../../data/model/word_model.dart';
-import '../home_screen.dart';
+import '../../../data/models/word_model.dart';
+import '../../../view_model/gameview_model.dart';
 
-class GameCategoryList extends StatelessWidget {
-  const GameCategoryList({
+class GameCategoryContainerList extends StatelessWidget {
+  const GameCategoryContainerList({
     super.key,
     required this.screenWidth,
-    required this.dropDownProvider,
+    required this.homeProvider,
     required this.value
   });
 
   final double screenWidth;
-  final DropDownProvider dropDownProvider;
-  final GameController value;
+  final HomeProvider homeProvider;
+  final GameProvider value;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +31,7 @@ class GameCategoryList extends StatelessWidget {
         itemBuilder: (context, index) {
           final category = Category.values[index];
           final isSelected =
-              dropDownProvider.selectedCategory == category;
+              homeProvider.selectedCategory == category;
           final isGameActive =
               value.isGameStart || value.isGameOver;
           return Padding(
@@ -39,7 +41,7 @@ class GameCategoryList extends StatelessWidget {
                   isGameActive
                       ? null
                       : () {
-                        dropDownProvider.selectCategory(category);
+                        homeProvider.selectCategory(category);
                       },
               child: CategoryContainerWidget(
                 isGameActive: isGameActive,

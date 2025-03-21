@@ -5,6 +5,8 @@ import 'package:wordly/views/game/game.dart';
 import 'package:wordly/views/game/game_over.dart';
 import 'package:wordly/views/game/win_screen.dart';
 
+import 'view_model/gameview_model.dart';
+import 'view_model/homeview_model.dart';
 import 'views/splash/splash_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -20,12 +22,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        //  ChangeNotifierProvider(create: (context) => SplashProvider()),
-        ChangeNotifierProvider(create: (context) => DropDownProvider()),
-        ChangeNotifierProvider(create: (context) => GameController()),
+        ChangeNotifierProvider(create: (context) => HomeProvider()),
+        ChangeNotifierProvider(create: (context) => GameProvider()),
         ChangeNotifierProvider(
-          create: (context) => WinController(),
-          
+          create: (context) => WinController(), 
         ),
       ],
       child: MaterialApp(

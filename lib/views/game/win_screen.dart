@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:wordly/views/home/home_screen.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
 
-import '../../shared/widgets/word_fact_card.dart';
+import '../didyouknow/word_fact_card.dart';
 
 class WinScreen extends StatefulWidget {
   const WinScreen({super.key});

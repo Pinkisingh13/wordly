@@ -1,43 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:wordly/views/home/home_screen.dart';
 
-class ScoreDisplay extends StatelessWidget {
-  const ScoreDisplay({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final score = context.select<GameController, int>(
-      (controller) => controller.score,
-    );
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text(
-          "Score :",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(width: 10),
-        Text(
-          "$score",
-          style: TextStyle(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        // ),
-      ],
-    );
-  }
-}
+import '../../view_model/gameview_model.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({super.key});
@@ -58,7 +24,7 @@ class GameScreen extends StatelessWidget {
             ? 40.0
             : (screenWidth - (5 * cellSize + 4 * 6)) / 2;
 
-        return Consumer<GameController>(
+        return Consumer<GameProvider>(
           builder:
               (context, controller, child) => Column(
                 children: [
@@ -129,40 +95,5 @@ class GameScreen extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-void showCustomSnackBar(
-  BuildContext context,
-  String message,
-  Color backgroundColor,
-) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        message,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      backgroundColor: backgroundColor,
-      duration: Duration(seconds: 2),
-      behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      margin: EdgeInsets.all(10),
-    ),
-  );
-}
-
-void showSnackBarSafely(
-  BuildContext context,
-  String message,
-  Color backgroundColor,
-) {
-  if (context.mounted) {
-    showCustomSnackBar(context, message, backgroundColor);
   }
 }
