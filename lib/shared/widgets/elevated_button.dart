@@ -38,7 +38,6 @@ class CustomElevatedButton extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: gradient,
-                // colors: [Color(0xffFF8A5C), Color(0xffFF5C8A)],
               ),
             ),
             child: Container(
@@ -66,11 +65,7 @@ class CustomElevatedButton extends StatelessWidget {
           duration: 1.seconds,
           color: Colors.white.withAlpha((0.2 * 255).toInt()),
         );
-        // .scale(
-        //   begin: const Offset(1, 1),
-        //   end: const Offset(1.02, 1.02),
-        //   duration: 2.seconds,
-        // );
+     
   }
 }
 
