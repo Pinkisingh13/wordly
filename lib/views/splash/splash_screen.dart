@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
+import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/utils/helper_function.dart';
 
 class SplashScreen extends StatelessWidget {
@@ -8,7 +10,8 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
+    Posthog().screen(screenName: 'Example Screen');
+
     final width = HelperFunction.width(context);
     final height = HelperFunction.height(context);
 
@@ -60,12 +63,11 @@ class SplashScreen extends StatelessWidget {
                         width: 200,
                         height: 200,
                       ).animate().scale(
-                        
                         duration: 3.seconds,
                         begin: const Offset(0.5, 0.5),
                         curve: Curves.elasticOut,
                       ),
-                      SizedBox(height: 20,),
+                      SizedBox(height: 20),
                       // Text with fade and slide
                       const Text(
                             "Word Fun For Little Champions!",
@@ -79,15 +81,18 @@ class SplashScreen extends StatelessWidget {
                           .fadeIn(duration: 2.seconds)
                           .slideY(begin: 0.5, end: 0),
 
-
                       // Play button with multiple effects
                       SizedBox(height: 200),
                       GestureDetector(
-                        onTap:
-                            () => Navigator.pushReplacementNamed(
-                              context,
-                              '/homescreen',
-                            ),
+                        onTap: () {
+
+                          //Post Hog
+                        AnalyticsService.trackEvent(eventName: "Going to HomeScreen", properties: {});
+                          Navigator.pushReplacementNamed(
+                            context,
+                            '/homescreen',
+                          );
+                        },
                         child: Container(
                               alignment: Alignment.center,
                               height: 64,
@@ -110,12 +115,16 @@ class SplashScreen extends StatelessWidget {
                                 ),
                               ),
                             )
-                            .animate(onPlay: (controller) => controller.repeat(),)
+                            .animate(
+                              onPlay: (controller) => controller.repeat(),
+                            )
                             // .flip(duration: 800.ms, curve: Curves.easeInOut)
                             .then(delay: 400.ms)
                             .shimmer(
                               duration: 1.seconds,
-                              color: Colors.white.withAlpha((0.4 * 255).toInt()),
+                              color: Colors.white.withAlpha(
+                                (0.4 * 255).toInt(),
+                              ),
                             )
                             .scale(
                               begin: const Offset(1, 1),

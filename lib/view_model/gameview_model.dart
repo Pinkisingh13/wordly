@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/data/services/word_services.dart';
 import 'package:wordly/main.dart';
 import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
@@ -45,10 +46,18 @@ class GameProvider extends ChangeNotifier {
     try {
       _score = await scoreRepository.getScore();
       FirebaseCrashlytics.instance.log("Score loaded successfully: $_score");
+
+      // Adding user context
+      FirebaseCrashlytics.instance.setCustomKey("current_score", _score);
     } catch (e, stack) {
       FirebaseCrashlytics.instance.recordError(e, stack);
 
-      FirebaseCrashlytics.instance.log('Failed to load score. Error: $e');
+      FirebaseCrashlytics.instance.log(
+        'Failed to load score. Error: ${e.toString()}',
+      );
+
+      // Adding after context
+      FirebaseCrashlytics.instance.setCustomKey("last_operation", "load_score");
     }
     notifyListeners();
   }
@@ -57,6 +66,16 @@ class GameProvider extends ChangeNotifier {
   void incrementScoreAndStreak() {
     _score++;
     _streak++;
+
+    //PostHog
+    AnalyticsService.trackEvent(
+      eventName: "score_streak_increased",
+      properties: {
+        'new_score': _score,
+        'streak_count': _streak,
+        'word': systemWord,
+      },
+    );
     FirebaseCrashlytics.instance.log(
       'Score incremented to $_score and streak is $_streak',
     );
@@ -139,6 +158,11 @@ class GameProvider extends ChangeNotifier {
       }
 
       String userWord = gameBoard[row].join();
+
+      AnalyticsService.trackEvent(
+        eventName: "user_word",
+        properties: {"user_word": userWord},
+      );
       FirebaseCrashlytics.instance.log('User submitted word: $userWord');
 
       final isvalid = await isvalidWord(userWord.toLowerCase());
@@ -157,6 +181,16 @@ class GameProvider extends ChangeNotifier {
             'User guessed the correct word: $userWord',
           );
           incrementScoreAndStreak();
+          AnalyticsService.trackEvent(
+            eventName: "game_won",
+            properties: {
+              'system_word': systemWord,
+              'user_word': userWord,
+              'attempts': row + 1,
+              'final_score': _score,
+              'final_streak': _streak,
+            },
+          );
           moveToWinScreen(context);
           isGameStart = false;
           isGameOver = true;
@@ -218,12 +252,28 @@ class GameProvider extends ChangeNotifier {
           isGameOver = true;
           isGameStart = false;
           resetStreak();
-
           moveToGameOverScreen(context);
         }
       }
-    } on Exception catch (e, stack) {
-      FirebaseCrashlytics.instance.recordError(e, stack, fatal: true);
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: true,
+        information: [
+          'row: $row',
+          'col: $col',
+          'board: ${gameBoard.toString()}',
+        ],
+      );
+
+      AnalyticsService.trackEvent(
+        eventName: "game_error:submit()",
+        properties: {
+          'error_type': e.runtimeType.toString(),
+          'game_state': {'row': row, 'col': col, 'score': _score},
+        },
+      );
       FirebaseCrashlytics.instance.log('Error occurred in submitWord(): $e');
     }
 
@@ -232,26 +282,60 @@ class GameProvider extends ChangeNotifier {
 
   // Reset Game
   void resetGame(BuildContext context) {
-    row = 0;
-    col = 0;
-    cellColors = List.generate(5, (_) => List.filled(5, Colors.transparent));
-    gameBoard = List.generate(5, (_) => List.filled(5, ""));
-    isGameOver = false;
-    isGameStart = false;
-    FirebaseCrashlytics.instance.log('Game has been reset.');
-    context.read<HomeProvider>().reset();
+    try {
+      //  pre-reset state log
+      FirebaseCrashlytics.instance.log(
+        'Resetting game. Previous score: $_score',
+      );
+      FirebaseCrashlytics.instance.setCustomKey("pre_reset_score", _score);
+      row = 0;
+      col = 0;
+      cellColors = List.generate(5, (_) => List.filled(5, Colors.transparent));
+      gameBoard = List.generate(5, (_) => List.filled(5, ""));
+      isGameOver = false;
+      isGameStart = false;
+      context.read<HomeProvider>().reset();
+
+      AnalyticsService.trackEvent(
+        eventName: "game_reset",
+        properties: {
+          'final_score': _score,
+          'final_streak': _streak,
+          'reset_reason': 'win/game_over',
+        },
+      );
+
+      //post-reset log
+      FirebaseCrashlytics.instance.log('Game reset complete');
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack);
+    }
     notifyListeners();
   }
 
   // Move to Win Screen
   void moveToWinScreen(BuildContext context) {
-    final arguments = {'systemWord': systemWord, 'streak': streak};
-    Navigator.pushReplacementNamed(context, '/winscreen', arguments: arguments);
-    FirebaseCrashlytics.instance.log('Moving to Win Screen.');
+    try {
+      AnalyticsService.trackEvent(eventName: "Move to Win Screen");
+      FirebaseCrashlytics.instance.log('Navigation to WinScreen');
+      FirebaseCrashlytics.instance.setCustomKey('final_score', _score);
+      FirebaseCrashlytics.instance.setCustomKey('final_streak', _streak);
+      FirebaseCrashlytics.instance.setCustomKey('system_word', systemWord);
+
+      final arguments = {'systemWord': systemWord, 'streak': streak};
+      Navigator.pushReplacementNamed(
+        context,
+        '/winscreen',
+        arguments: arguments,
+      );
+    } catch (e, stack) {
+      FirebaseCrashlytics.instance.recordError(e, stack);
+    }
   }
 
   // Move to Game Over Screen
   void moveToGameOverScreen(BuildContext context) {
+    AnalyticsService.trackEvent(eventName: "Game over: unable to guess");
     final arguments = {'systemWord': systemWord, 'streak': streak};
     Navigator.pushReplacementNamed(
       context,

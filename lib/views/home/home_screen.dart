@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/utils/helper_function.dart';
 import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
 import 'package:wordly/views/home/widgets/game_category_list_widget.dart';
@@ -69,21 +70,26 @@ class HomeScreen extends StatelessWidget {
                       ),
                   SizedBox(height: screenWidth > 600 ? 30 : 20),
 
-                  SubmiButton.submitButton(
-                    "Submit",
-                    () {
-                      if (value.col == 5) {
-                        value.handleChange("submit", context);
-                      } else {
-                        CustomSnackBar.showSnackBarSafely(
-                          context,
-                          "Please Fill the boxes",
-                          Colors.red,
-                        );
-                      }
-                    },
-                    screenWidth,
-                  ),
+                  SubmiButton.submitButton("Submit", () {
+                    if (value.col == 5) {
+                      value.handleChange("submit", context);
+
+                      //Post Hog
+                      AnalyticsService.trackEvent(
+                        eventName: "word_submitted",
+                        properties: {
+                          'current_streak': value.streak,
+                          'current_score': value.score,
+                        },
+                      );
+                    } else {
+                      CustomSnackBar.showSnackBarSafely(
+                        context,
+                        "Please Fill the boxes",
+                        Colors.red,
+                      );
+                    }
+                  }, screenWidth),
                 ],
               ),
             );
