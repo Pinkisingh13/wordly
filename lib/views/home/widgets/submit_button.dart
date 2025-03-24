@@ -37,7 +37,8 @@ class  SubmiButton {
               fontWeight: FontWeight.bold,
             ),
           ),
-        ).animate().scale(duration: 300.ms).then(delay: 100.ms).shake(),
+        ).animate().scale(duration: 300.ms)
+        // .then(delay: 100.ms).shake(),
   );
 }
 

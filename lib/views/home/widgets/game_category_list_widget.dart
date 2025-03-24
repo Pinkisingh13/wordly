@@ -24,10 +24,11 @@ class GameCategoryContainerList extends StatelessWidget {
       height: 120,
     
       child: ListView.builder(
+        
+        itemCount: Category.values.length,
         padding: const EdgeInsets.symmetric(horizontal: 10),
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
-        itemCount: Category.values.length,
         itemBuilder: (context, index) {
           final category = Category.values[index];
           final isSelected =

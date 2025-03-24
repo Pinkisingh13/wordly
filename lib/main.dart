@@ -1,5 +1,4 @@
 import 'dart:isolate';
-import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -26,16 +25,13 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  //Loading .env only for mobile
-  if (!kIsWeb) {
     await dotenv.load(fileName: '.env');
-  }
+  
 
   // Initialize Firebase for all platforms
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-  if (!kIsWeb) {
     final posthogApiKey = dotenv.env['POSTHOG_API_KEY'].toString();
     final posthogHost = dotenv.env['POSTHOG_HOST'].toString();
 
@@ -50,7 +46,7 @@ void main() async {
           // ..debug = kDebugMode;
           // ..sessionReplay = true;
     await Posthog().setup(posthogConfig);
-  }
+  
 
   /// Error handlers (keep for all platforms)
 

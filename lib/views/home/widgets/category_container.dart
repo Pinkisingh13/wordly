@@ -73,8 +73,9 @@ class CategoryContainerWidget extends StatelessWidget {
               width: 55,
               repeat: false,
               animate: true,
+             
 
-              options: LottieOptions(enableApplyingOpacityToLayers: true),
+              options: LottieOptions(enableApplyingOpacityToLayers: true, ),
             ),
           ),
       ],

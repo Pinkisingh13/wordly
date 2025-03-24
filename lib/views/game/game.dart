@@ -37,7 +37,7 @@ class GameScreen extends StatelessWidget {
                       vertical: isMobile ? 15 : 20
                       ),
                     shrinkWrap: true,
-                    itemCount: controller.gameBoard.length * 5,
+                    itemCount: 5*5,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5,
                       // mainAxisExtent: 40,
@@ -50,9 +50,9 @@ class GameScreen extends StatelessWidget {
                       int row = index ~/ 5;
                       int col = index % 5;
                       final String cellValue = controller.gameBoard[row][col];
-                      return AnimatedContainer(
-                        duration: 300.ms, // Animation duration
-                        curve: Curves.easeInCubic, // Animation curve
+                      return Container(
+                        // duration: 300.ms, // Animation duration
+                        // curve: Curves.easeInCubic, // Animation curve
                         // padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -79,13 +79,9 @@ class GameScreen extends StatelessWidget {
                                       ),
                                     )
                                     .animate() // Looping animation
-                                    .scale(duration: 100.ms) // Scale animation
+                                    .scale() // Scale animation
                                     // Shake animation
-                                    .flip(
-                                      duration: 100.ms,
-                                      direction: Axis.horizontal,
-                                      perspective: 50,
-                                    )
+                                  
                                 : SizedBox.shrink(),
                       );
                     },

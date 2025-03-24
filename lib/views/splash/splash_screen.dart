@@ -58,10 +58,11 @@ class SplashScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       // Logo with elastic pop-in
-                      Image.asset(
-                        'assets/logo_png.png',
+                      SvgPicture.asset(
+                        'assets/logosvg.svg',
                         width: 200,
                         height: 200,
+                        
                       ).animate().scale(
                         duration: 3.seconds,
                         begin: const Offset(0.5, 0.5),
