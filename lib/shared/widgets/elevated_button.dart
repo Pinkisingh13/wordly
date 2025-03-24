@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
+import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/utils/helper_function.dart';
-
 
 import '../../view_model/gameview_model.dart';
 
 class CustomElevatedButton extends StatelessWidget {
-  const CustomElevatedButton({super.key, required this.title, required this.gradient});
+  const CustomElevatedButton({
+    super.key,
+    required this.title,
+    required this.gradient,
+  });
 
   final String title;
   final List<Color> gradient;
@@ -24,6 +28,11 @@ class CustomElevatedButton extends StatelessWidget {
             ),
           ),
           onPressed: () {
+            //POSTHOG Event FUNNEL
+            AnalyticsService.trackEvent(
+              eventName: "play_again",
+              properties: {'timestamp': DateTime.now().toIso8601String()},
+            );
             context.read<GameProvider>().resetGame(context);
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -65,13 +74,10 @@ class CustomElevatedButton extends StatelessWidget {
           duration: 1.seconds,
           color: Colors.white.withAlpha((0.2 * 255).toInt()),
         );
-     
   }
 }
 
-
-
-class GradientColor{
+class GradientColor {
   // Gradient 1
   static Color orange = Color(0xffFF6B6B);
   static Color pink = Color(0xffFF8B94);

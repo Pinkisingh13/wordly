@@ -74,14 +74,8 @@ class HomeScreen extends StatelessWidget {
                     if (value.col == 5) {
                       value.handleChange("submit", context);
 
-                      //Post Hog
-                      AnalyticsService.trackEvent(
-                        eventName: "word_submitted",
-                        properties: {
-                          'current_streak': value.streak,
-                          'current_score': value.score,
-                        },
-                      );
+                      //Post Hog (Funnel -> game started)
+
                     } else {
                       CustomSnackBar.showSnackBarSafely(
                         context,

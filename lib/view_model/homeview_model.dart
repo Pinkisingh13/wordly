@@ -19,7 +19,7 @@ class HomeProvider extends ChangeNotifier {
     _selectedCategory = category;
     _systemWord = null;
 
-    // PostHog Tracking
+    // PostHog Funnel(Category selected) Tracking
     if (!kIsWeb) {
       AnalyticsService.trackEvent(
         eventName: "category_selected",
@@ -92,16 +92,13 @@ class HomeProvider extends ChangeNotifier {
       AnalyticsService.trackEvent(eventName: 'word_definition_fetch_success', properties: {
           'word': word,
           'definition_count': wordDetailsList.length,
-          'first_definition': wordDetailsList.isNotEmpty 
-              ? wordDetailsList.first
-              : 'none',
         });
 
       debugPrint(
         'Word definition fetched successfully: ${wordDetailsList.length} entries found.',
       );
       FirebaseCrashlytics.instance.log(
-        'Word definition fetched successfully. Entries found: ${wordDetailsList.length}',
+        'Word definition fetched successfully',
       );
     } catch (e, stackTrace) {
       AnalyticsService.trackEvent(eventName: "word_definition_fetch_failed", properties: {

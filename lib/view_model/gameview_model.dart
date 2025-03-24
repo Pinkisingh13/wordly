@@ -74,6 +74,7 @@ class GameProvider extends ChangeNotifier {
         'new_score': _score,
         'streak_count': _streak,
         'word': systemWord,
+        'timestamp': DateTime.now().toIso8601String(),
       },
     );
     FirebaseCrashlytics.instance.log(
@@ -125,8 +126,17 @@ class GameProvider extends ChangeNotifier {
       return;
     }
     debugPrint(systemWord);
-
     isGameStart = true;
+    AnalyticsService.trackEvent(
+      eventName: "game_started",
+      properties: {
+        'category_name': systemWord,
+        'current_streak': streak,
+        'current_score': score,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
+
     if (key.length == 1 && RegExp(r'^[A-Z]$').hasMatch(key)) {
       if (col < 5) {
         gameBoard[row][col] = key;
@@ -161,7 +171,10 @@ class GameProvider extends ChangeNotifier {
 
       AnalyticsService.trackEvent(
         eventName: "user_word",
-        properties: {"user_word": userWord},
+        properties: {
+          "user_word": userWord,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
       );
       FirebaseCrashlytics.instance.log('User submitted word: $userWord');
 
@@ -182,13 +195,15 @@ class GameProvider extends ChangeNotifier {
           );
           incrementScoreAndStreak();
           AnalyticsService.trackEvent(
-            eventName: "game_won",
+            eventName: "game_completed",
             properties: {
               'system_word': systemWord,
               'user_word': userWord,
               'attempts': row + 1,
               'final_score': _score,
               'final_streak': _streak,
+              'outcome': 'game_win',
+              'timestamp': DateTime.now().toIso8601String(),
             },
           );
           moveToWinScreen(context);
@@ -252,6 +267,18 @@ class GameProvider extends ChangeNotifier {
           isGameOver = true;
           isGameStart = false;
           resetStreak();
+          AnalyticsService.trackEvent(
+            eventName: "game_completed",
+            properties: {
+              'system_word': systemWord,
+              'user_word': userWord,
+              'attempts': row + 1,
+              'final_score': _score,
+              'final_streak': _streak,
+              'outcome': 'game_lose',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
           moveToGameOverScreen(context);
         }
       }
@@ -316,7 +343,15 @@ class GameProvider extends ChangeNotifier {
   // Move to Win Screen
   void moveToWinScreen(BuildContext context) {
     try {
-      AnalyticsService.trackEvent(eventName: "Move to Win Screen");
+      AnalyticsService.trackEvent(
+        eventName: "game_win_screen",
+        properties: {
+          'systemword': systemWord,
+          'score': score,
+          'streak': streak,
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
       FirebaseCrashlytics.instance.log('Navigation to WinScreen');
       FirebaseCrashlytics.instance.setCustomKey('final_score', _score);
       FirebaseCrashlytics.instance.setCustomKey('final_streak', _streak);
@@ -335,7 +370,15 @@ class GameProvider extends ChangeNotifier {
 
   // Move to Game Over Screen
   void moveToGameOverScreen(BuildContext context) {
-    AnalyticsService.trackEvent(eventName: "Game over: unable to guess");
+    AnalyticsService.trackEvent(
+      eventName: "game_lose_screen",
+      properties: {
+        'systemword': systemWord,
+        'score': score,
+        'streak': streak,
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+    );
     final arguments = {'systemWord': systemWord, 'streak': streak};
     Navigator.pushReplacementNamed(
       context,

@@ -46,6 +46,7 @@ dependencies:
   flutter_dotenv: ^5.2.1
   firebase_core: ^3.12.1
   firebase_crashlytics: ^4.3.4
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/appicons/
+    - assets/appicons/android/
     - .env
     - assets/
     - assets/category/
@@ -101,8 +104,6 @@ flutter:
     - assets/peach_circle.svg
     - assets/wordly_name_logo.svg
     - assets/sad_emoji_two.png
-    - assets/game_over_star.jpg
-    - assets/purple_star.svg
     - assets/logo_png.png
     - assets/streak.svg
 

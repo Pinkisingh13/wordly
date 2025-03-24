@@ -43,8 +43,12 @@ void main() async {
         PostHogConfig(posthogApiKey)
           ..host = posthogHost
           ..captureApplicationLifecycleEvents = true
-          ..debug = kDebugMode
-          ..sessionReplay = true;
+          ..sessionReplayConfig=PostHogSessionReplayConfig()
+          ..flushInterval=const Duration(seconds: 10)
+          ..flushAt=1
+          ..debug = true;
+          // ..debug = kDebugMode;
+          // ..sessionReplay = true;
     await Posthog().setup(posthogConfig);
   }
 

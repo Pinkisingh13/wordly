@@ -39,8 +39,6 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
     final streak = args?['streak'] as int? ?? 0;
 
-
-
     final listOfSystemWord = systemWord.split("");
     final score = context.watch<GameProvider>().score;
     // kdebugprint("winscreen score: $score");
@@ -93,7 +91,6 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
                   SizedBox(height: 45),
 
                   CustomElevatedButton(
-             
                     gradient: [
                       GradientColor.purple,
                       GradientColor.lightPinkish,
@@ -116,7 +113,6 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
                 child: Lottie.asset(
                   "assets/win.json",
                   controller: _animationController,
-
                   onLoaded: (composition) {
                     _animationController
                       ..duration = composition.duration
@@ -238,7 +234,6 @@ class WinDetailsWidget extends StatelessWidget {
   }
 }
 
-
 class TAnimationLoaderWidget extends StatelessWidget {
   const TAnimationLoaderWidget({
     super.key,
@@ -260,13 +255,9 @@ class TAnimationLoaderWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Lottie.asset(animation, width: HelperFunction.width(context) * 0.8),
+        Lottie.asset(animation, width: HelperFunction.width(context) * 0.8, ),
         const SizedBox(height: 30),
-        Text(
-          text,
-          // style: Theme.of(context).textTheme.bodyMedium,
-          style: TextStyle(fontSize: 25),
-        ),
+        Text(text, style: TextStyle(fontSize: 25)),
         const SizedBox(
           height: 30,
           // height: TSizes.defaultSpace,

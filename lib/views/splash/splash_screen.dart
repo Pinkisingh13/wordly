@@ -58,8 +58,8 @@ class SplashScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       // Logo with elastic pop-in
-                      SvgPicture.asset(
-                        'assets/logosvg.svg',
+                      Image.asset(
+                        'assets/logo_png.png',
                         width: 200,
                         height: 200,
                       ).animate().scale(
@@ -87,7 +87,7 @@ class SplashScreen extends StatelessWidget {
                         onTap: () {
 
                           //Post Hog
-                        AnalyticsService.trackEvent(eventName: "Going to HomeScreen", properties: {});
+                        AnalyticsService.trackEvent(eventName: "Going to HomeScreen",);
                           Navigator.pushReplacementNamed(
                             context,
                             '/homescreen',
