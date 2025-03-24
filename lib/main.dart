@@ -25,44 +25,29 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-    await dotenv.load(fileName: '.env');
-  
+  await dotenv.load(fileName: '.env');
 
   // Initialize Firebase for all platforms
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
 
-    final posthogApiKey = dotenv.env['POSTHOG_API_KEY'].toString();
-    final posthogHost = dotenv.env['POSTHOG_HOST'].toString();
-
-    final posthogConfig =
-        PostHogConfig(posthogApiKey)
-          ..host = posthogHost
-          ..captureApplicationLifecycleEvents = true
-          ..sessionReplayConfig=PostHogSessionReplayConfig()
-          ..flushInterval=const Duration(seconds: 10)
-          ..flushAt=1
-          ..debug = true;
-          // ..debug = kDebugMode;
-          // ..sessionReplay = true;
-    await Posthog().setup(posthogConfig);
-  
-
-  /// Error handlers (keep for all platforms)
-
-  // 1️⃣ Catches all synchronous Flutter framework errors
-  FlutterError.onError =
-      (errorDetails) =>
-          FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-
-  // 2️⃣ Catches all uncaught asynchronous errors
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
-
-  // 3️⃣ Catches Dart's Isolate thread errors
   if (!kIsWeb) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+
+    /// Error handlers (keep for all platforms)
+
+    // 1️⃣ Catches all synchronous Flutter framework errors
+    FlutterError.onError =
+        (errorDetails) =>
+            FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+
+    // 2️⃣ Catches all uncaught asynchronous errors
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+
+    // 3️⃣ Catches Dart's Isolate thread errors
+
     Isolate.current.addErrorListener(
       RawReceivePort((pair) async {
         final List<dynamic> errorAndStacktrace = pair;
@@ -74,6 +59,22 @@ void main() async {
       }).sendPort,
     );
   }
+
+  final posthogApiKey = dotenv.env['POSTHOG_API_KEY'].toString();
+  final posthogHost = dotenv.env['POSTHOG_HOST'].toString();
+
+  final posthogConfig =
+      PostHogConfig(posthogApiKey)
+        ..host = posthogHost
+        ..captureApplicationLifecycleEvents = true
+        ..sessionReplayConfig = PostHogSessionReplayConfig()
+        ..flushInterval = const Duration(seconds: 10)
+        ..flushAt = 1
+        ..debug = true;
+  // ..debug = kDebugMode;
+  // ..sessionReplay = true;
+  await Posthog().setup(posthogConfig);
+
   AnalyticsService.trackEvent(
     eventName: 'app_launched',
     properties: {'platform': 'Flutter'},

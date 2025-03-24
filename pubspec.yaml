@@ -53,8 +53,14 @@ dev_dependencies:
     sdk: flutter
 
 flutter_launcher_icons:
-  android: "launcher_icon"
   image_path: "assets/appicons/app_logo.png"
+  android: true
+
+  web:
+    generate: true
+
+
+
   min_sdk_android: 21
 
   # The "flutter_lints" package below contains a set of recommended lints to
