@@ -1,76 +1,108 @@
 
-# Wordly - A Category-Based Wordle Game
+# 📲 Wordly - A Category-Based Wordle Game
 
 
->  "**A developer is one who builds what they desire to see in reality.**"
+> **Wordly**  isn’t just another Wordle clone—it’s a  **category-driven word-guessing adventure**  designed to level the playing field. 
+**Tired of guessing random 5-letter words with no context?** 
+Wordly lets you  **choose categories**  like  _Finance, Sports, Bollywood_, or  _Technology_, narrowing down possibilities while keeping the challenge alive. Track your  **score**, ride the  **streak**, and dive into  **word insights**  (definitions, synonyms, and examples) after every game. With playful animations and a vibrant UI, Wordly turns word puzzles into a strategic, educational, and visually delightful experience.
+----------
 
-
+## Problem Solved
 While playing Wordle, I realized how challenging it is to guess a random word without any hints or categories. With billions of words in existence, it's almost impossible to know them all. That's when I identified a problem — Wordle should allow users to pick a category to make guessing more strategic and enjoyable. So, I built Wordly — a vibrant, playful Wordle game where users can guess words by choosing categories like Finance, Plants, Sports, and more. This enhances the guessing experience and gives players a fairer chance to win.
 
-## App Description
+----------
 
-Wordly is a colorful and engaging word-guessing game that lets users choose a word category before playing. This feature helps users narrow their guesses, improving the gaming experience.
-
-**Categories Available:**
-
- - Finance
- - Plants
- - Sports
- - Food
- - Places
- - Social Media
- - Technology
- - Bollywood
- - Entertainment
-
-**Screens in the App:**
-
- - Splash Screen
-
- - Home Screen (Choose category, start game)
-
- - Win Screen (If correct guess)
-
- - Game Over Screen (If all attempts fail)
-
-**Additional Features:**
-
- - Users can view their score and streak.
-
- - After each game, users can explore the "Did You Know?" section to
-   learn the word's meaning, synonyms, examples, and part of speech.
-
-- The app boasts a playful and colorful UI with animations that enhance the user experience.
-
-## Purpose & Goal
-
-Wordly was created to solve the frustrating problem of random word guessing by introducing category-based gameplay, making the experience fairer and more engaging for players.
 
 ## Key Features
-
-**Core Features:**
-
- - 5 Attempts to Guess a 5-Letter Word
    
- - Color Indicators for Character Accuracy
+### Core Features:
 
- - Green = Correct letter in the correct position.
+I) 🏁 5 Attempts to Guess a 5-Letter Word
+   
+II) **Smart Validation:**
+   - 👉 Color Indicators for Character Accuracy
 
- - Yellow = Correct letter but wrong position.
+        - 🟢 Green = Correct letter in the correct position.
 
- - Grey = Letter not in the word.
+        - 🟨 Yellow = Correct letter but wrong position.
 
- - Score and Streak Tracking
+        - 🩶 Grey = Letter not in the word. 
+ - ✅ Real-time API checks for valid English words.
 
- - Win or Game Over Screens with a "Play Again" option.
+IV)🔥 Score and Streak Tracking:
+     - Persistent score (SharedPreferences) and streak reset on loss.
 
-**Unique Features:**
+V) ✅ **Win/Lose Logic**:
+    
+   -  **Win**: Correct guess → Animated win screen with word details.
+        
+   -  **Lose**: 5 failed attempts → Game Over screen with correct word.
 
- - **"Did You Know?" Section**: Offers word-related information (meaning,
+#### 😲 Unique Features
+
+ - ❓ **"Did You Know?" Section**: Offers word-related information (meaning,
    synonyms, part of speech, and examples).
 
- - **Category Selection**: Allows users to select a word category for
+ - ✅ **Category Selection**: Allows users to select a word category for
    focused guessing.
+   
+ - **Playful UI**: Lottie animations, gradient backgrounds, and SVG icons.
+----------
+
+## Categories Available
+
+ - 💰 Finance
+ - 🪴 Plants
+ - 🏏 Sports
+ - 🍇 Food
+ - 🏡 Places
+ - 🤳 Social Media
+ - 👩‍💻 Technology
+ - 🎥 Bollywood
+ - 📺 Entertainment
+
+----------
+
+## 📱 Glimpse of the Application (Screenshots)
+
+<h3 align="center">WELCOME</h3>
+<div align ='center'>
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-start.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+<h3 align="center">Video Demo</h3>
+<div align = "center">
+<video src="wordly-video.mp4" controls width="100%"></video>
+</div>
+
+<h3 align="center">START SCREEN</h3>
+  <div align = "center">
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-splash-and-start-screen.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+<h3 align="center">CATEGORY-SELECTION SCREEN</h3>
+<div align = "center">
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-category-selection.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+<h3 align="center">GAME START SCREEN</h3>
+<p align= "center">For Invalid word app will show a error snackbar as you can see in bottom of the screen</p>
+<div align = "center">
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-game-start.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+<h3 align="center">WINNER SCREEN</h3>
+<div align = "center">
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-you-win.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+<h3 align="center">GAME OVER & WORD INSIGHT SCREEN</h3>
+<div align = "center">
+  <img src="https://github.com/Pinkisingh13/Pinkisingh13/blob/main/wordly-you-lose-and-word-insight.jpg" width="80%" style="margin-right: 10px;">
+</div>
+
+----------
+
 
 ## Tech Stack
 
@@ -83,32 +115,77 @@ SharedPreferences (For score persistence)
 
 Provider (State management)
 
-Firebase (For future analytics, crashlytics, or cloud features)
+Firebase ( Crashlytics)
+
+PostHog (App Insight)
 ```
+----------
 
 ## Packages Used:
 
 ``` provider: ^6.1.2
-http: ^1.3.0
-flutter_svg: ^2.0.17
-flutter_animate: ^4.5.2
-lottie: ^3.3.1
-showcaseview: ^4.0.1
-flutter_launcher_icons: ^0.14.3
-shared_preferences: ^2.2.2
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  http: ^1.3.0
+  flutter_svg: ^2.0.17
+  flutter_animate: ^4.5.2
+  lottie: ^3.3.1
+  flutter_launcher_icons: ^0.14.3
+  shared_preferences: ^2.2.2
+  posthog_flutter: ^4.10.4
+  flutter_dotenv: ^5.2.1
+  firebase_core: ^3.12.1
+  firebase_crashlytics: ^4.3.4
 ```
+----------
 
 ## App Flow (User Journey)
 
-
 ```mermaid
-graph LR
-A[Splash Screen] --> B([Home Screen]) 
-B -- Correct guess? --> C(Win Screen)
-B -- Failed to guess? --> D(Game Over Screen)
-C -- play again--> B
-D -- try again--> B
-
+flowchart TD
+    %% Define nodes with unique styling
+    splash[/"🎮 Splash Screen"/]:::splashStyle
+    start["🏁 Start Game Screen"]:::startStyle
+    category["📋 Category Selection"]:::categoryStyle
+    gameStart["🎲 Game Start (Keyboard activated)"]:::gameStyle
+    disableCard["🚫 Category Cards Disabled"]:::disableStyle
+    
+    %% Decision node
+    guessCheck{"✅ Word Guessed?"}:::decisionStyle
+    
+    %% End states
+    winScreen["🏆 Win Screen"]:::winStyle
+    loseScreen["💔 Lose Screen"]:::loseStyle
+    
+    %% Restart node
+    playAgain["🔄 Play Again"]:::restartStyle
+    
+    %% Define flow
+    splash --> start
+    start --> category
+    category --> gameStart
+    gameStart --> disableCard
+    disableCard --> guessCheck
+    
+    %% Define branching logic
+    guessCheck -->|"Yes"| winScreen
+    guessCheck -->|"No"| loseScreen
+    
+    %% Define restart flow
+    winScreen --> playAgain
+    loseScreen --> playAgain
+    playAgain --> gameStart
+    
+    %% Custom styles for nodes
+    classDef splashStyle fill:#ff9e64,stroke:#ff9e64,color:white,stroke-width:2px,font-weight:bold,border-radius:12px
+    classDef startStyle fill:#bb9af7,stroke:#bb9af7,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef categoryStyle fill:#7aa2f7,stroke:#7aa2f7,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef gameStyle fill:#2ac3de,stroke:#2ac3de,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef disableStyle fill:#e0af68,stroke:#e0af68,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef decisionStyle fill:#f7768e,stroke:#f7768e,color:white,stroke-width:2px,font-weight:bold,border-radius:16px
+    classDef winStyle fill:#9ece6a,stroke:#9ece6a,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef loseStyle fill:#db4b4b,stroke:#db4b4b,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
+    classDef restartStyle fill:#73daca,stroke:#73daca,color:white,stroke-width:2px,font-weight:bold,border-radius:8px
 ```
 
 - Splash Screen
@@ -126,6 +203,8 @@ D -- try again--> B
 - "Did You Know?" Section (Word details)
 
 - Play Again (Resets board but retains score)
+
+----------
 
 ## Code Highlights
 
@@ -151,9 +230,38 @@ D -- try again--> B
 
  - Includes a "Did You Know?" section for word details.
 
-## Installation Guide (Coming Soon)
+----------
 
-Step-by-step instructions will be provided once development is complete.
+## Installation Guide
+
+### Prerequisites:
+
+ - Flutter SDK (version 3.19.5+)
+
+ - Android Studio/VS Code
+
+ - Git
+
+### Clone the Repository:
+
+```
+git clone https://github.com/yourusername/wordly.git
+```
+```
+cd wordly
+```
+### Install Dependencies:
+```
+flutter pub get
+```
+### Run the App:
+
+ ```
+flutter run
+```
+**Choose your connected device/emulator when prompted.**
+
+----------
 
 ## API Documentation
 
@@ -161,13 +269,15 @@ Uses Dictionary API for word validation and fetching word details:
 
     https://api.dictionaryapi.dev/api/v2/entries/en/{word}
 
+----------
+
 ## Future Improvements
 
 - Expanding the list of categories for greater variety.
 
 - Adding leaderboard and achievement features for enhanced competition.
 
- - Implementing Firebase for analytics, crash reporting, and user insights.
+----------
 
 ## Troubleshooting & Thought Process
 
@@ -176,21 +286,14 @@ Building Wordly was challenging but rewarding. Breaking down the logic step by s
 
 - A category dropdown menu.
 
-- A simple virtual keyboard.
+- A Quarty virtual keyboard.
+  
+- Adjusting the grid
 
-- Snackbar alerts for winning/losing the game.
+I achieved a well-structured and engaging app by starting small and gradually adding features. Each step brought clarity to my logic and improved my understanding of Flutter development.
 
-By starting small and gradually adding features, I achieved a well-structured and engaging app. Each step brought clarity to my logic and improved my understanding of Flutter development.
-
-## Glimpse of the Application (Screenshots & Videos Coming Soon)
-
-I will include app visuals in this section to showcase the vibrant UI and engaging gameplay.
-
-## Play Store Launch (Coming Soon)
-
-I plan to publish Wordly on the Play Store soon. Stay tuned for updates!
-
-## Helpful Resources
+----------
+## **Acknowledgement**
 
 - **Motiff** (UI Inspiration)
 
@@ -199,9 +302,16 @@ I plan to publish Wordly on the Play Store soon. Stay tuned for updates!
 - **Lottie** (Animations)
 
 - **Color Hunt** (Color Palettes)
+    
+- **Inspiration**: Wordle’s simplicity, but with a twist.
 
-## Existing Apps Like This
+----------
 
-While Wordle exists, Wordly solves a crucial problem by introducing category selection, making it more accessible and engaging for players.
+## Play Store Launch (Coming Soon)
 
-**Stay tuned for exciting updates and future improvements! 🚀**
+I am planning to publish Wordly on the Play Store soon. Stay tuned for updates!
+
+----------
+🌟**Wordly**  isn’t just a game — it’s a bridge between casual play and learning. By blending  **strategy**  (category selection),  **education**  (word insights), and  **fun**  (animations), it redefines what a word puzzle can be. Ready to guess smarter? Let’s play! 🚀
+
+> End with a call-to-action for testing, contributions, or feedback.
