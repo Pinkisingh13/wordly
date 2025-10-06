@@ -10,10 +10,13 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = context.watch<GameProvider>().score;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isLargeScreen = screenWidth > 900;
+    final isMediumScreen = screenWidth > 600 && screenWidth <= 900;
+    final maxWidth = isLargeScreen ? 700.0 : (isMediumScreen ? 550.0 : double.infinity);
 
     return Scaffold(
       backgroundColor: const Color(0xffF5FFFA),
-      
       appBar: AppBar(
         backgroundColor: const Color(0xffE0F4E5),
         elevation: 0,
@@ -47,99 +50,96 @@ class SettingsScreen extends StatelessWidget {
             colors: [Color(0xffE0F4E5), Color(0xffF5FFFA)],
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-          child: Column(
-            children: [
-              // Profile Section
-              _buildProfileCard(context, score),
-              
-              const SizedBox(height: 30),
-
-              // Settings Options
-              _buildSettingsOption(
-                context,
-                icon: Icons.feedback_outlined,
-                title: 'Send Feedback',
-                subtitle: 'Share bugs, features, or improvements',
-                color: const Color(0xffFF6B6B),
-                onTap: () {
-                  AnalyticsService.trackEvent(
-                    eventName: 'feedback_screen_opened',
-                    properties: {'from': 'settings'},
-                  );
-                  Navigator.pushNamed(context, '/feedbackscreen');
-                },
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: maxWidth),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: isLargeScreen ? 40 : 20,
+                vertical: 30,
               ),
-
-              const SizedBox(height: 15),
-
-              _buildSettingsOption(
-                context,
-                icon: Icons.delete_outline,
-                title: 'Clear Game Data',
-                subtitle: 'Reset your score and streak',
-                color: const Color(0xffF5CD47),
-                onTap: () => _showClearDataDialog(context),
+              child: Column(
+                children: [
+                  _buildProfileCard(context, score),
+                  const SizedBox(height: 30),
+                  _buildSettingsOption(
+                    context,
+                    icon: Icons.feedback_outlined,
+                    title: 'Send Feedback',
+                    subtitle: 'Share bugs, features, or improvements',
+                    color: const Color(0xffFF6B6B),
+                    onTap: () {
+                      AnalyticsService.trackEvent(
+                        eventName: 'feedback_screen_opened',
+                        properties: {'from': 'settings'},
+                      );
+                      Navigator.pushNamed(context, '/feedbackscreen');
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  _buildSettingsOption(
+                    context,
+                    icon: Icons.delete_outline,
+                    title: 'Clear Game Data',
+                    subtitle: 'Reset your score and streak',
+                    color: const Color(0xffF5CD47),
+                    onTap: () => _showClearDataDialog(context),
+                  ),
+                  const SizedBox(height: 15),
+                  _buildSettingsOption(
+                    context,
+                    icon: Icons.info_outline,
+                    title: 'About',
+                    subtitle: 'Version 1.0.0',
+                    color: const Color(0xff4ECDC4),
+                    onTap: () => _showAboutDialog(context),
+                  ),
+                  const SizedBox(height: 40),
+                  Container(
+                    padding: const EdgeInsets.all(30),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        SvgPicture.asset(
+                          'assets/singlestar.svg',
+                          height: 50,
+                          width: 50,
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'More Features Coming Soon!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff00224D),
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Sound effects, themes, and more exciting updates are on the way!',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 15),
-
-              _buildSettingsOption(
-                context,
-                icon: Icons.info_outline,
-                title: 'About',
-                subtitle: 'Version 1.0.0',
-                color: const Color(0xff4ECDC4),
-                onTap: () => _showAboutDialog(context),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Coming Soon Section
-              Container(
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/singlestar.svg',
-                      height: 50,
-                      width: 50,
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'More Features Coming Soon!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff00224D),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Sound effects, themes, and more exciting updates are on the way!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -276,83 +276,102 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showClearDataDialog(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogMaxWidth = screenWidth > 600 ? 400.0 : screenWidth * 0.9;
+    
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('Clear Game Data?'),
-          content: const Text(
-            'This will reset your score and streak. This action cannot be undone.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel', ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xffFF6B6B),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: dialogMaxWidth),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              onPressed: () {
-                context.read<GameProvider>().scoreRepository.saveScore(0);
-                context.read<GameProvider>().loadScore();
-                
-                AnalyticsService.trackEvent(
-                  eventName: 'game_data_cleared',
-                  properties: {'timestamp': DateTime.now().toIso8601String()},
-                );
-                
-                Navigator.pop(dialogContext);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Game data cleared successfully!'),
-                    backgroundColor: Color(0xffAAD174),
+              title: const Text('Clear Game Data?'),
+              content: const Text(
+                'This will reset your score and streak. This action cannot be undone.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffFF6B6B),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                );
-              },
-              child: const Text('Clear', style: TextStyle(color: Colors.white),),
+                  onPressed: () {
+                    context.read<GameProvider>().scoreRepository.saveScore(0);
+                    context.read<GameProvider>().loadScore();
+                    
+                    AnalyticsService.trackEvent(
+                      eventName: 'game_data_cleared',
+                      properties: {'timestamp': DateTime.now().toIso8601String()},
+                    );
+                    
+                    Navigator.pop(dialogContext);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Game data cleared successfully!'),
+                        backgroundColor: Color(0xffAAD174),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Clear',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
   }
 
   void _showAboutDialog(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final dialogMaxWidth = screenWidth > 600 ? 400.0 : screenWidth * 0.9;
+    
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('About Wordly'),
-          content: const Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Version: 1.0.0'),
-              SizedBox(height: 10),
-              Text('Word Fun For Little Champions!'),
-              SizedBox(height: 10),
-              Text(
-                'A fun and educational word guessing game for kids.',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+        return Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: dialogMaxWidth),
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              title: const Text('About Wordly'),
+              content: const Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Version: 1.0.0'),
+                  SizedBox(height: 10),
+                  Text('Word Fun For Little Champions!'),
+                  SizedBox(height: 10),
+                  Text(
+                    'A fun and educational word guessing game for kids.',
+                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Close'),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
