@@ -9,24 +9,65 @@ class VirtualKeyboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate key size based on screen width
         final screenWidth = constraints.maxWidth;
-        final isLargeScreen = screenWidth > 600;
-        final keySize = isLargeScreen ? 40.0 : 48.0;
-        final keyPadding = isLargeScreen ? 4.0 : 2.0;
-        final fontSize = isLargeScreen ? 24.0 : 22.0;
-        final iconSize = isLargeScreen ? 36.0 : 33.0;
+        
+        // Responsive sizing
+        final double keyHeight;
+        final double keyPadding;
+        final double fontSize;
+        final double iconSize;
+        
+        if (screenWidth > 900) {
+          // Desktop
+          keyHeight = 55.0;
+          keyPadding = 6.0;
+          fontSize = 20.0;
+          iconSize = 28.0;
+        } else if (screenWidth > 600) {
+          // Tablet
+          keyHeight = 50.0;
+          keyPadding = 4.0;
+          fontSize = 18.0;
+          iconSize = 26.0;
+        } else {
+          // Mobile
+          keyHeight = 48.0;
+          keyPadding = 2.0;
+          fontSize = 18.0;
+          iconSize = 24.0;
+        }
+
         return ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 600),
+          constraints: BoxConstraints(maxWidth: 700),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildKeyRow(['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'], fontSize: fontSize,keyPadding: keyPadding, keySize: keySize, iconSize: iconSize),
-              _buildKeyRow(['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'], fontSize: fontSize,keyPadding: keyPadding, keySize: keySize, iconSize: iconSize),
+              _buildKeyRow(
+                ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                fontSize: fontSize,
+                keyPadding: keyPadding,
+                keyHeight: keyHeight,
+                iconSize: iconSize,
+              ),
+              SizedBox(height: 4),
+              _buildKeyRow(
+                ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+                fontSize: fontSize,
+                keyPadding: keyPadding,
+                keyHeight: keyHeight,
+                iconSize: iconSize,
+              ),
+              SizedBox(height: 4),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ..._buildKeys(['Z', 'X', 'C', 'V', 'B', 'N', 'M'],fontSize: fontSize,keyPadding: keyPadding, keySize: keySize, iconSize: iconSize),
+                  ..._buildKeys(
+                    ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+                    fontSize: fontSize,
+                    keyPadding: keyPadding,
+                    keyHeight: keyHeight,
+                    iconSize: iconSize,
+                  ),
                   _buildKey(
                     '❌',
                     isDeleteKey: true,
@@ -34,7 +75,7 @@ class VirtualKeyboard extends StatelessWidget {
                     fontSize: fontSize,
                     iconSize: iconSize,
                     keyPadding: keyPadding,
-                    keySize: keySize,
+                    keyHeight: keyHeight,
                   ),
                 ],
               ),
@@ -49,7 +90,7 @@ class VirtualKeyboard extends StatelessWidget {
     String key, {
     bool isDeleteKey = false,
     int flex = 1,
-    required double keySize,
+    required double keyHeight,
     required double keyPadding,
     required double fontSize,
     required double iconSize,
@@ -57,67 +98,85 @@ class VirtualKeyboard extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        // padding: const EdgeInsets.all(2.0),
         padding: EdgeInsets.all(keyPadding),
-        child: GestureDetector(
-          onTap: () => onKeyPressed(key),
-          child: Container(
-            // height: 48,
-            height: keySize,
-            decoration: BoxDecoration(
-              // color: isDeleteKey ? Color(0xff5D5771) : const Color(0xff5D5771).withOpacity(0.5),
-              color: isDeleteKey ? Color(0xffA78BFA) : Color(0xff6C5CE7),
-              borderRadius: BorderRadius.circular(7),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xff5D5771).withOpacity(0.3),
-                  offset: Offset(0, 5),
-                  blurRadius: 3,
-                ),
-              ],
-            ),
-            alignment: Alignment.center,
-            child:
-                isDeleteKey
-                    ? SvgPicture.asset(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => onKeyPressed(key),
+            borderRadius: BorderRadius.circular(8),
+            child: Container(
+              height: keyHeight,
+              decoration: BoxDecoration(
+                color: isDeleteKey ? Color(0xffA78BFA) : Color(0xff6C5CE7),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0xff5D5771).withOpacity(0.3),
+                    offset: Offset(0, 4),
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: isDeleteKey
+                  ? SvgPicture.asset(
                       'assets/backspace.svg',
-                      // width: 33,
-                      // height: 33,
                       width: iconSize,
                       height: iconSize,
                     )
-                    : Text(
+                  : Text(
                       key,
                       style: TextStyle(
                         color: Colors.white,
-                        // fontSize: 22,
                         fontSize: fontSize,
-
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildKeyRow(List<String> keys, {required double keySize,
+  Widget _buildKeyRow(
+    List<String> keys, {
+    required double keyHeight,
     required double keyPadding,
     required double fontSize,
     required double iconSize,
-    }) {
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [for (String key in keys) _buildKey(key, fontSize: fontSize, keySize: keySize, keyPadding: keyPadding, iconSize: iconSize)],
+      children: [
+        for (String key in keys)
+          _buildKey(
+            key,
+            fontSize: fontSize,
+            keyHeight: keyHeight,
+            keyPadding: keyPadding,
+            iconSize: iconSize,
+          )
+      ],
     );
   }
 
-  List<Widget> _buildKeys(List<String> keys, {    
-    required double keySize,
+  List<Widget> _buildKeys(
+    List<String> keys, {
+    required double keyHeight,
     required double keyPadding,
     required double fontSize,
-    required double iconSize,}) {
-    return [for (String key in keys) _buildKey(key,fontSize: fontSize, iconSize: iconSize,keyPadding: keyPadding,keySize: keySize)];
+    required double iconSize,
+  }) {
+    return [
+      for (String key in keys)
+        _buildKey(
+          key,
+          fontSize: fontSize,
+          iconSize: iconSize,
+          keyPadding: keyPadding,
+          keyHeight: keyHeight,
+        )
+    ];
   }
 }

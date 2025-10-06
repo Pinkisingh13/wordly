@@ -66,7 +66,7 @@ class GameProvider extends ChangeNotifier {
     _score++;
     _streak++;
 
-    //PostHog
+    //!PostHog
     AnalyticsService.trackEvent(
       eventName: "score_streak_increased",
       properties: {
@@ -108,6 +108,8 @@ class GameProvider extends ChangeNotifier {
     if (provider == null || provider.systemWord == null) {
       throw Exception("System word not initialized");
     }
+
+    print("System Word is: ${provider.systemWord}");
     return provider.systemWord!;
   }
 

@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:wordly/utils/helper_function.dart';
 import 'package:wordly/view_model/gameview_model.dart';
 import 'package:wordly/shared/widgets/elevated_button.dart';
-
 import '../../didyouknow/word_fact_card.dart';
 
 class WinScreen extends StatefulWidget {
@@ -17,7 +16,6 @@ class WinScreen extends StatefulWidget {
 
 class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
   late AnimationController _animationController;
-
   bool _showAnimation = true;
 
   @override
@@ -38,22 +36,31 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final systemWord = args?['systemWord']?.toString() ?? 'hello';
     final streak = args?['streak'] as int? ?? 0;
-
     final listOfSystemWord = systemWord.split("");
     final score = context.watch<GameProvider>().score;
-    // kdebugprint("winscreen score: $score");
+
+    final width = HelperFunction.width(context);
+    final isLargeScreen = width > 900;
+    final isMediumScreen = width > 600 && width <= 900;
 
     return Scaffold(
+      // backgroundColor: const Color(0xffF5FFFA),
       appBar: AppBar(
-        toolbarHeight: 5,
-        backgroundColor: Colors.black,
+        toolbarHeight: 9,
+        // backgroundColor: Colors.black,
+        backgroundColor: const Color(0xffE0F4E5),
         automaticallyImplyLeading: false,
       ),
       body: SafeArea(
+        bottom: true,
+
         child: Stack(
           children: [
             Container(
-              padding: EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(
+                vertical: 20,
+                horizontal: isLargeScreen ? 40 : 20,
+              ),
               width: double.infinity,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -62,46 +69,74 @@ class _WinScreenState extends State<WinScreen> with TickerProviderStateMixin {
                   colors: [
                     Color(0xffFFE66D),
                     Color(0xff4ECDC4),
-                    // Color(0xff45B7D1),
                   ],
                 ),
               ),
-              child: Column(
-                children: [
-                  SvgPicture.asset('assets/win_cup.svg'),
-                  SizedBox(height: 30),
-                  SvgPicture.asset('assets/you_win.svg'),
-                  SizedBox(height: 35),
-                  Row(
-                    spacing: 8,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ...listOfSystemWord.map((word) {
-                        return WordContainerWidget(
-                          wordChar: word.toUpperCase(),
-                        );
-                      }),
-                    ],
-                  ),
-                  SizedBox(height: 48),
-                  WinDetailsWidget(
-                    score: score.toString(),
-                    streak: streak.toString(),
-                  ),
-                  SizedBox(height: 45),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 600),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/win_cup.svg',
+                          height: isLargeScreen ? 120 : (isMediumScreen ? 100 : 80),
+                        ),
+                        SizedBox(height: 20),
+                        SvgPicture.asset(
+                          'assets/you_win.svg',
+                          height: isLargeScreen ? 60 : (isMediumScreen ? 50 : 40),
+                        ),
+                        SizedBox(height: 30),
 
-                  CustomElevatedButton(
-                    gradient: [
-                      GradientColor.purple,
-                      GradientColor.lightPinkish,
-                    ],
-                    title: "Play Again! ",
+                        // Word display
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: listOfSystemWord.map((word) {
+                            return WordContainerWidget(
+                              wordChar: word.toUpperCase(),
+                              height: isLargeScreen ? 70 : (isMediumScreen ? 60 : 50),
+                              width: isLargeScreen ? 70 : (isMediumScreen ? 60 : 50),
+                            );
+                          }).toList(),
+                        ),
+
+                        SizedBox(height: 40),
+
+                        // Win details
+                        WinDetailsWidget(
+                          score: score.toString(),
+                          streak: streak.toString(),
+                        ),
+
+                        SizedBox(height: 40),
+
+                        //! Play again button
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: isLargeScreen ? 400 : 350,
+                          ),
+                          child: CustomElevatedButton(
+                            gradient: [
+                              GradientColor.purple,
+                              GradientColor.lightPinkish,
+                            ],
+                            title: "Play Again!",
+                          ),
+                        ),
+                        
+                        SizedBox(height: 20),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
             ),
 
-            //WORD FACT CARD
+            // Word Fact Card
             WordFactCard(color: GradientColor.purple, word: systemWord),
 
             // Overlay animation
@@ -194,19 +229,24 @@ class WinDetailsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = HelperFunction.width(context);
+    final isLargeScreen = width > 900;
+    final containerMaxWidth = isLargeScreen ? 500 : width * 0.9;
+
     return Column(
       children: [
-        isShowText
-            ? Text(
-              "Amazing Job!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-            )
-            : SizedBox(),
-        isShowText ? SizedBox(height: 16) : SizedBox(),
+        if (isShowText)
+          Text(
+            "Amazing Job!",
+            style: TextStyle(
+              fontSize: isLargeScreen ? 28 : 24,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        if (isShowText) SizedBox(height: 16),
+        
         Container(
           alignment: Alignment.center,
-
-          width: width * 0.90,
+          constraints: BoxConstraints(maxWidth: containerMaxWidth.toDouble()),
           height: 55,
           decoration: BoxDecoration(
             color: Color(0xffFFE5E5),
@@ -217,66 +257,22 @@ class WinDetailsWidget extends StatelessWidget {
             style: TextStyle(fontSize: 18),
           ),
         ),
+        
         SizedBox(height: 12),
+        
         Container(
           alignment: Alignment.center,
-
-          width: width * 0.90,
+          constraints: BoxConstraints(maxWidth: containerMaxWidth.toDouble()),
           height: 55,
           decoration: BoxDecoration(
             color: Color(0xffE5F9FF),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Text("Score: $score 🏆", style: TextStyle(fontSize: 18)),
+          child: Text(
+            "Score: $score 🏆",
+            style: TextStyle(fontSize: 18),
+          ),
         ),
-      ],
-    );
-  }
-}
-
-class TAnimationLoaderWidget extends StatelessWidget {
-  const TAnimationLoaderWidget({
-    super.key,
-    required this.text,
-    required this.animation,
-    this.showAction = false,
-    this.actionText,
-    this.onActionPressed,
-  });
-
-  final String text;
-  final String animation;
-  final bool showAction;
-  final String? actionText;
-  final VoidCallback? onActionPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Lottie.asset(animation, width: HelperFunction.width(context) * 0.8, ),
-        const SizedBox(height: 30),
-        Text(text, style: TextStyle(fontSize: 25)),
-        const SizedBox(
-          height: 30,
-          // height: TSizes.defaultSpace,
-        ),
-        showAction
-            ? SizedBox(
-              width: 250,
-              child: OutlinedButton(
-                onPressed: onActionPressed,
-                style: OutlinedButton.styleFrom(backgroundColor: Colors.black),
-                child: Text(
-                  actionText!,
-                  style: Theme.of(context).textTheme.bodyMedium!.apply(
-                    color: const Color.fromARGB(255, 182, 182, 182),
-                  ),
-                ),
-              ),
-            )
-            : const SizedBox(),
       ],
     );
   }

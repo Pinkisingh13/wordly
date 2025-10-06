@@ -7,9 +7,9 @@ class QuickTipContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 350,
-      height: 70,
-      padding: const EdgeInsets.only(top: 12.0, left: 10, right: 3),
+      width: double.infinity, // Responsive width
+      constraints: BoxConstraints(maxWidth: 500),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Color(0xffE5F0FF),
         borderRadius: BorderRadius.circular(20),
@@ -22,20 +22,14 @@ class QuickTipContainer extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        // spacing: 10,
-        children: [
- 
-          Text(
-            GenerateRandomTip.quickTip,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xff4B5563),
-            ),
-          ),
-        ],
+      child: Text(
+        GenerateRandomTip.quickTip,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: Color(0xff4B5563),
+        ),
       ),
     );
   }

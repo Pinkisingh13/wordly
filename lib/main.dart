@@ -9,9 +9,11 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/firebase_options.dart';
+import 'package:wordly/views/feedbacks/feedback.dart';
 import 'package:wordly/views/home/home_screen.dart';
 import 'package:wordly/views/game/gameover/game_over.dart';
 import 'package:wordly/views/game/gamewin/win_screen.dart';
+import 'package:wordly/views/settings/settings.dart';
 
 import 'data/datasources/local_data_source.dart';
 import 'data/repositories/score_repository.dart';
@@ -25,28 +27,25 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: '.env');
+  // Load .env only for non-web platforms
+  if (!kIsWeb) {
+    await dotenv.load(fileName: '.env');
+  }
 
-  // Initialize Firebase for all platforms
+  // Initialize Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  //! Firebase Crashlytics (non-web only)
   if (!kIsWeb) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    
+    FlutterError.onError = (errorDetails) =>
+        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
 
-    /// Error handlers (keep for all platforms)
-
-    // 1️⃣ Catches all synchronous Flutter framework errors
-    FlutterError.onError =
-        (errorDetails) =>
-            FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-
-    // 2️⃣ Catches all uncaught asynchronous errors
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
     };
-
-    // 3️⃣ Catches Dart's Isolate thread errors
 
     Isolate.current.addErrorListener(
       RawReceivePort((pair) async {
@@ -60,25 +59,26 @@ void main() async {
     );
   }
 
-  final posthogApiKey = dotenv.env['POSTHOG_API_KEY'].toString();
-  final posthogHost = dotenv.env['POSTHOG_HOST'].toString();
+  //! PostHog initialization (mobile only)
+  if (!kIsWeb) {
+    final posthogApiKey = dotenv.env['POSTHOG_API_KEY'].toString();
+    final posthogHost = dotenv.env['POSTHOG_HOST'].toString();
 
-  final posthogConfig =
-      PostHogConfig(posthogApiKey)
-        ..host = posthogHost
-        ..captureApplicationLifecycleEvents = true
-        ..sessionReplayConfig = PostHogSessionReplayConfig()
-        ..flushInterval = const Duration(seconds: 10)
-        ..flushAt = 1
-        ..debug = true;
-  // ..debug = kDebugMode;
-  // ..sessionReplay = true;
-  await Posthog().setup(posthogConfig);
+    final posthogConfig = PostHogConfig(posthogApiKey)
+      ..host = posthogHost
+      ..captureApplicationLifecycleEvents = true
+      ..sessionReplayConfig = PostHogSessionReplayConfig()
+      ..flushInterval = const Duration(seconds: 10)
+      ..flushAt = 1
+      ..debug = kDebugMode;
 
-  AnalyticsService.trackEvent(
-    eventName: 'app_launched',
-    properties: {'platform': 'Flutter'},
-  );
+    await Posthog().setup(posthogConfig);
+
+    AnalyticsService.trackEvent(
+      eventName: 'app_launched',
+      properties: {'platform': 'Mobile'},
+    );
+  }
 
   runApp(const MyApp());
 }
@@ -128,6 +128,13 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
 
     case '/winscreen':
       return _buildPageRoute(WinScreen(), settings);
+      
+    case '/settingsscreen':
+      return _buildPageRoute(SettingsScreen(), settings);
+
+    case '/feedbackscreen':
+      return _buildPageRoute(FeedbackScreen(), settings);
+
 
     default:
       return null;
