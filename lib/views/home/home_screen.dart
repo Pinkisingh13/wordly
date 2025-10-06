@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wordly/data/services/analytics_service.dart';
 import 'package:wordly/utils/helper_function.dart';
 import 'package:wordly/utils/snackbar/showcustom_snackbar.dart';
@@ -21,48 +23,114 @@ class HomeScreen extends StatelessWidget {
     final isLargeScreen = screenWidth > 900;
     final isMediumScreen = screenWidth > 600 && screenWidth <= 900;
 
+    //! Download Apk Button
+    void _downloadAPK(BuildContext context) async {
+      try {
+        final uri = Uri.parse("");
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.platformDefault);
+
+          AnalyticsService.trackEvent(
+            eventName: 'apk_download_initiated',
+            properties: {
+              'platform': 'web',
+              'timestamp': DateTime.now().toIso8601String(),
+            },
+          );
+        } else {
+          if (context.mounted) {
+            CustomSnackBar.showSnackBarSafely(
+              context,
+              'Unable to download. Please try again later.',
+              Colors.red,
+            );
+          }
+        }
+      } catch (e) {
+        if (context.mounted) {
+          CustomSnackBar.showSnackBarSafely(
+            context,
+            'Download failed. Please try again.',
+            Colors.red,
+          );
+        }
+      }
+    }
+
     return Scaffold(
       // backgroundColor: Color(0xffE0F4E5),
-       backgroundColor: const Color(0xffF5FFFA),
+      backgroundColor: const Color(0xffF5FFFA),
       appBar: AppBar(
-  elevation: 1,
-  actionsPadding: EdgeInsets.only(right: 10),
-  centerTitle: true,
-  title: SvgPicture.asset('assets/wordly_name_logo.svg'),
-  // backgroundColor: Color(0xffE0F4E5),
-  backgroundColor: const Color(0xffE0F4E5),
-  actions: [
-    IconButton(
-      icon: Icon(
-        Icons.settings_outlined,
-        color: Color(0xff00224D),
-        size: 28,
+        elevation: 1,
+        actionsPadding: EdgeInsets.only(right: 10),
+        centerTitle: true,
+        title: SvgPicture.asset('assets/wordly_name_logo.svg'),
+        // backgroundColor: Color(0xffE0F4E5),
+        backgroundColor: const Color(0xffE0F4E5),
+        actions: [
+          if (kIsWeb)
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: TextButton.icon(
+                icon: Icon(Icons.download, color: Color(0xff00224D)),
+                label: Text(
+                  'Download App',
+                  style: TextStyle(
+                    color: Color(0xff00224D),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () => _downloadAPK(context),
+              ),
+            ),
+
+          IconButton(
+            icon: Icon(
+              Icons.settings_outlined,
+              color: Color(0xff00224D),
+              size: 28,
+            ),
+            onPressed: () {
+              AnalyticsService.trackEvent(
+                eventName: 'settings_opened',
+                properties: {
+                  'from': 'home_screen',
+                  'timestamp': DateTime.now().toIso8601String(),
+                },
+              );
+              Navigator.pushNamed(context, '/settingsscreen');
+            },
+            tooltip: 'Settings',
+          ),
+        ],
       ),
-      onPressed: () {
-        AnalyticsService.trackEvent(
-          eventName: 'settings_opened',
-          properties: {
-            'from': 'home_screen',
-            'timestamp': DateTime.now().toIso8601String(),
-          },
-        );
-        Navigator.pushNamed(context, '/settingsscreen');
-      },
-      tooltip: 'Settings',
-    ),
-  ],
-),
       body: SafeArea(
         child: Consumer<GameProvider>(
           builder: (BuildContext context, GameProvider value, Widget? child) {
             return Center(
               child: ConstrainedBox(
                 constraints: BoxConstraints(maxWidth: 1400),
-                child: isLargeScreen
-                    ? _buildLargeScreenLayout(
-                        screenWidth, homeProvider, value, context)
-                    : _buildMobileLayout(
-                        screenWidth, homeProvider, value, context, isMediumScreen),
+                child:
+                    isLargeScreen
+                        ? _buildLargeScreenLayout(
+                          screenWidth,
+                          homeProvider,
+                          value,
+                          context,
+                        )
+                        : _buildMobileLayout(
+                          screenWidth,
+                          homeProvider,
+                          value,
+                          context,
+                          isMediumScreen,
+                        ),
               ),
             );
           },
@@ -89,7 +157,7 @@ class HomeScreen extends StatelessWidget {
             value: value,
           ),
           SizedBox(height: 30),
-          
+
           // Game and Keyboard side by side
           Expanded(
             child: Row(
@@ -97,13 +165,10 @@ class HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Game Board
-                Expanded(
-                  flex: 3,
-                  child: Center(child: GameScreen()),
-                ),
-                
+                Expanded(flex: 3, child: Center(child: GameScreen())),
+
                 SizedBox(width: 40),
-                
+
                 // Keyboard
                 Expanded(
                   flex: 2,
@@ -154,7 +219,7 @@ class HomeScreen extends StatelessWidget {
           value: value,
         ),
         SizedBox(height: isMediumScreen ? 20 : 10),
-        
+
         Expanded(
           child: SingleChildScrollView(
             child: Column(
