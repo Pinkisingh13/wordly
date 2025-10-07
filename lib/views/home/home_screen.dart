@@ -24,38 +24,41 @@ class HomeScreen extends StatelessWidget {
     final isMediumScreen = screenWidth > 600 && screenWidth <= 900;
 
     //! Download Apk Button
-    void _downloadAPK(BuildContext context) async {
-      try {
-        final uri = Uri.parse("");
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.platformDefault);
 
-          AnalyticsService.trackEvent(
-            eventName: 'apk_download_initiated',
-            properties: {
-              'platform': 'web',
-              'timestamp': DateTime.now().toIso8601String(),
-            },
-          );
-        } else {
-          if (context.mounted) {
-            CustomSnackBar.showSnackBarSafely(
-              context,
-              'Unable to download. Please try again later.',
-              Colors.red,
-            );
-          }
-        }
-      } catch (e) {
-        if (context.mounted) {
-          CustomSnackBar.showSnackBarSafely(
-            context,
-            'Download failed. Please try again.',
-            Colors.red,
-          );
-        }
+void _downloadAPK(BuildContext context) async {
+  final url = Uri.parse("https://wordly.pinkisingh.com/wordly-v1.0.1.apk");
+  
+  try {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.platformDefault);
+      
+      AnalyticsService.trackEvent(
+        eventName: 'apk_download_initiated',
+        properties: {
+          'platform': 'web',
+          'version': '1.0.0',
+          'timestamp': DateTime.now().toIso8601String(),
+        },
+      );
+    } else {
+      if (context.mounted) {
+        CustomSnackBar.showSnackBarSafely(
+          context,
+          'Unable to download. Please try again.',
+          Colors.red,
+        );
       }
     }
+  } catch (e) {
+    if (context.mounted) {
+      CustomSnackBar.showSnackBarSafely(
+        context,
+        'Download failed: ${e.toString()}',
+        Colors.red,
+      );
+    }
+  }
+}
 
     return Scaffold(
       // backgroundColor: Color(0xffE0F4E5),
@@ -72,16 +75,18 @@ class HomeScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 8),
               child: TextButton.icon(
-                icon: Icon(Icons.download, color: Color(0xff00224D)),
+                icon: Icon(Icons.download, color: Colors.white),
                 label: Text(
                   'Download App',
                   style: TextStyle(
-                    color: Color(0xff00224D),
+                    // color: Color(0xff00224D),
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 style: TextButton.styleFrom(
-                  backgroundColor: Colors.white.withOpacity(0.8),
+                  backgroundColor: Colors.deepPurple,
+                  // backgroundColor: Colors.white.withOpacity(0.8),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
